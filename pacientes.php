@@ -27,21 +27,46 @@ function atualizarPaciente($pdo, $paciente_id, $nome, $animal, $raca, $tutor_id,
     ]);
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $paciente_id = $_POST['id'];
-    $nome = $_POST['nome'];
-    $animal = $_POST['animal'];
-    $raca = $_POST['raca'];
-    $tutor_id = $_POST['tutor_id'];
-    $vet_id = $_POST['vet_id'];
+// Função para adicionar um novo paciente
+function adicionarPaciente($pdo, $nome, $animal, $raca, $tutor_id, $vet_id)
+{
+    $insert_query = "INSERT INTO tb_paciente (tx_nome, tx_animal, tx_raca, tutor_id, vet_id)
+                    VALUES (:nome, :animal, :raca, :tutor_id, :vet_id)";
+    $stmt = $pdo->prepare($insert_query);
+    return $stmt->execute(['nome' => $nome, 'animal' => $animal, 'raca' => $raca, 'tutor_id' => $tutor_id, 'vet_id' => $vet_id]);
+}
 
-    // Chamar a função para atualizar os dados do paciente
-    if (atualizarPaciente($pdo, $paciente_id, $nome, $animal, $raca, $tutor_id, $vet_id)) {
-        // Atualização bem-sucedida
-        // Você pode adicionar feedback ao usuário aqui, se necessário
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['add_paciente'])) {
+        // Adicionar um novo paciente
+        $nome = $_POST['nome'];
+        $animal = $_POST['animal'];
+        $raca = $_POST['raca'];
+        $tutor_id = $_POST['tutor_id'];
+        $vet_id = $_POST['vet_id'];
+
+        if (adicionarPaciente($pdo, $nome, $animal, $raca, $tutor_id, $vet_id)) {
+            // Redirecionar de volta para a página de gerenciamento de pacientes após a adição
+            header("Location: pacientes.php");
+            exit;
+        } else {
+            echo "Falha ao adicionar paciente.";
+        }
     } else {
-        // Atualização falhou
-        // Lógica de tratamento de erro aqui
+        // Atualizar dados do paciente
+        $paciente_id = $_POST['id'];
+        $nome = $_POST['nome'];
+        $animal = $_POST['animal'];
+        $raca = $_POST['raca'];
+        $tutor_id = $_POST['tutor_id'];
+        $vet_id = $_POST['vet_id'];
+
+        if (atualizarPaciente($pdo, $paciente_id, $nome, $animal, $raca, $tutor_id, $vet_id)) {
+            // Atualização bem-sucedida
+            // Você pode adicionar feedback ao usuário aqui, se necessário
+        } else {
+            echo "Falha na atualização dos dados.";
+        }
     }
 }
 
@@ -56,10 +81,12 @@ $pacientes_data = [];
 while ($row = $pacientes_result->fetch(PDO::FETCH_ASSOC)) {
     $pacientes_data[] = $row;
 }
+
 // Consulta para recuperar informações dos tutores
 $tutores_query = "SELECT id, tx_nome FROM tb_tutor";
 $tutores_result = $pdo->query($tutores_query);
 $tutores_data = [];
+
 while ($row = $tutores_result->fetch(PDO::FETCH_ASSOC)) {
     $tutores_data[] = $row;
 }
@@ -68,6 +95,7 @@ while ($row = $tutores_result->fetch(PDO::FETCH_ASSOC)) {
 $veterinarios_query = "SELECT id, tx_nome FROM tb_vet";
 $veterinarios_result = $pdo->query($veterinarios_query);
 $veterinarios_data = [];
+
 while ($row = $veterinarios_result->fetch(PDO::FETCH_ASSOC)) {
     $veterinarios_data[] = $row;
 }
@@ -77,8 +105,6 @@ echo '<script>var pacientesData = ' . json_encode($pacientes_data) . ';</script>
 echo '<script>var tutoresData = ' . json_encode($tutores_data) . ';</script>';
 echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</script>';
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -110,7 +136,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                    <i class="fa fa-dog"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">VetCare</div>
             </a>
@@ -133,12 +159,19 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="charts.php">
+                <a class="nav-link" href="veterinario/veterinario.php">
                     <i class="fa fa-user-md"></i>
                     <span>Veterinários</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
+
+            <li class="nav-item">
+                <a class="nav-link" href="tutores.php">
+                    <i class="fa fa-paw"></i>
+                    <span>Tutores</span></a>
+            </li>
+
             <li class="nav-item">
                 <a class="nav-link" href="pacientes.php">
                     <i class="fa fa-dog"></i>
@@ -146,25 +179,19 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fa fa-paw"></i>
-                    <span>Tutores</span></a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="sinais/sinaisclinicos.php">
                     <i class="fa fa-list"></i>
                     <span>Sinais Clínicos</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="">
                     <i class="fa fa-file-medical"></i>
                     <span>Prontuários</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="usuario/usuario.php">
                     <i class="fa fa-users"></i>
                     <span>Usuários</span></a>
             </li>
@@ -331,6 +358,63 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
+                                <div class="modal fade" id="modalAddPaciente" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Adicionar Paciente
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="add-paciente-form">
+                                                    <label for="nome">Nome:</label>
+                                                    <input type="text" id="add-nome" required><br>
+                                                    <label for="animal">Animal:</label>
+                                                    <input type="text" id="add-animal" required><br>
+                                                    <label for="raca">Raça:</label>
+                                                    <input type="text" id="add-raca" required><br>
+
+                                                    <!-- Selecionar o tutor do paciente -->
+                                                    <label for="tutor_id">Tutor:</label>
+                                                    <select id="add-tutor" required>
+                                                        <?php foreach ($tutores_data as $tutor): ?>
+                                                        <option value="<?php echo $tutor['id']; ?>">
+                                                            <?php echo $tutor['tx_nome']; ?>
+                                                        </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                    <br>
+
+                                                    <!-- Selecionar o veterinário do paciente -->
+                                                    <label for="vet_id">Veterinário:</label>
+                                                    <select id="add-veterinario" required>
+                                                        <?php foreach ($veterinarios_data as $veterinario): ?>
+                                                        <option value="<?php echo $veterinario['id']; ?>">
+                                                            <?php echo $veterinario['tx_nome']; ?>
+                                                        </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Fechar</button>
+                                                <button type="button" class="btn btn-primary"
+                                                    id="add-paciente-btn">Adicionar Paciente</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#modalAddPaciente">
+                                    Adicionar Paciente
+                                </button>
 
                             </div>
                         </div>
@@ -401,7 +485,6 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
     <script>
-    // Adicionar um ouvinte de eventos para o botão "Salvar"
     const saveButtons = document.querySelectorAll('.save-btn');
     saveButtons.forEach((button) => {
         button.addEventListener('click', (event) => {
@@ -435,6 +518,41 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                 `id=${pacienteId}&nome=${nome}&animal=${animal}&raca=${raca}&tutor_id=${tutorId}&vet_id=${veterinarioId}`;
             xhr.send(data);
         });
+    });
+
+    // Adicionar um ouvinte de eventos para o botão "Adicionar Paciente" no modal
+    const addPacienteBtn = document.getElementById('add-paciente-btn');
+    addPacienteBtn.addEventListener('click', () => {
+        const nome = document.getElementById('add-nome').value;
+        const animal = document.getElementById('add-animal').value;
+        const raca = document.getElementById('add-raca').value;
+        const tutorSelect = document.getElementById('add-tutor');
+        const tutorId = tutorSelect.options[tutorSelect.selectedIndex].value;
+        const veterinarioSelect = document.getElementById('add-veterinario');
+        const veterinarioId = veterinarioSelect.options[veterinarioSelect.selectedIndex].value;
+
+        // Enviar os dados do novo paciente para o servidor usando uma solicitação AJAX
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'pacientes.php', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                // Adição bem-sucedida
+                console.log('Novo paciente adicionado com sucesso.');
+                // Atualizar a tabela de pacientes, se necessário
+                // Fechar o modal
+                $('#modalAddPaciente').modal('hide'); // Este é um comando jQuery
+                // Adicionar feedback ao usuário, se necessário
+            } else {
+                // Adição falhou
+                console.error('Falha na adição do paciente.');
+                // Adicionar tratamento de erro, se necessário
+            }
+        };
+
+        const data =
+            `nome=${nome}&animal=${animal}&raca=${raca}&tutor_id=${tutorId}&vet_id=${veterinarioId}`;
+        xhr.send(data);
     });
     </script>
 </body>

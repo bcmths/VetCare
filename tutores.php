@@ -78,7 +78,7 @@ echo '<script>var veterinarioData = ' . json_encode([
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                    <i class="fa fa-dog"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">VetCare</div>
             </a>
@@ -101,12 +101,19 @@ echo '<script>var veterinarioData = ' . json_encode([
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="charts.php">
+                <a class="nav-link" href="veterinario/veterinario.php">
                     <i class="fa fa-user-md"></i>
                     <span>Veterinários</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
+
+            <li class="nav-item">
+                <a class="nav-link" href="tutores.php">
+                    <i class="fa fa-paw"></i>
+                    <span>Tutores</span></a>
+            </li>
+
             <li class="nav-item">
                 <a class="nav-link" href="pacientes.php">
                     <i class="fa fa-dog"></i>
@@ -114,25 +121,19 @@ echo '<script>var veterinarioData = ' . json_encode([
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fa fa-paw"></i>
-                    <span>Tutores</span></a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="sinais/sinaisclinicos.php">
                     <i class="fa fa-list"></i>
                     <span>Sinais Clínicos</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="">
                     <i class="fa fa-file-medical"></i>
                     <span>Prontuários</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="usuario/usuario.php">
                     <i class="fa fa-users"></i>
                     <span>Usuários</span></a>
             </li>
@@ -256,23 +257,23 @@ echo '<script>var veterinarioData = ' . json_encode([
                                     </thead>
                                     <tbody>
                                         <?php foreach ($tutores_data as $tutor): ?>
-                                        <tr>
-                                            <td>
-                                                <?php echo $tutor['id']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $tutor['tx_nome']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $tutor['tx_email']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $tutor['nb_telefone']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $tutor['tx_endereco']; ?>
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td>
+                                                    <?php echo $tutor['id']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $tutor['tx_nome']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $tutor['tx_email']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $tutor['nb_telefone']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $tutor['tx_endereco']; ?>
+                                                </td>
+                                            </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
