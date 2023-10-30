@@ -160,18 +160,28 @@ echo '<script>var veterinarioData = ' . json_encode([
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2" />
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    <div id="dateDisplay"></div>
+
+                    <script>
+                        function updateDate() {
+                            const dateElement = document.getElementById('dateDisplay');
+                            const currentDate = new Date();
+                            const options = {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            };
+                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                                options); // Altere 'pt-BR' para o código de idioma desejado
+
+                            dateElement.textContent = `Hoje é ${formattedDate}.`;
+                        }
+
+                        // Atualize a data automaticamente a cada segundo (ou conforme necessário)
+                        updateDate(); // Chama a função para exibir a data inicial
+                        setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                    </script>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -223,7 +233,7 @@ echo '<script>var veterinarioData = ' . json_encode([
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
+                                    Sair
                                 </a>
                             </div>
                         </li>
@@ -233,15 +243,13 @@ echo '<script>var veterinarioData = ' . json_encode([
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Tutores</h1>
 
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">
+                            <h3 class="m-0 font-weight-bold text-primary">
                                 Tutores
-                            </h6>
+                            </h3>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -311,17 +319,17 @@ echo '<script>var veterinarioData = ' . json_encode([
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Quer mesmo sair?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    Select "Logout" below if you are ready to end your current session.
+                    Clique em "Sair" se deseja encerrar sua sessão.
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">
-                        Cancel
+                        Cancelar
                     </button>
                     <a class="btn btn-primary" href="logout.php">Logout</a>
                 </div>

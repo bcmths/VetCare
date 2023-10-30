@@ -33,42 +33,37 @@ function adicionarPaciente($pdo, $nome, $animal, $raca, $tutor_id, $vet_id)
     $insert_query = "INSERT INTO tb_paciente (tx_nome, tx_animal, tx_raca, tutor_id, vet_id)
                     VALUES (:nome, :animal, :raca, :tutor_id, :vet_id)";
     $stmt = $pdo->prepare($insert_query);
-    return $stmt->execute(['nome' => $nome, 'animal' => $animal, 'raca' => $raca, 'tutor_id' => $tutor_id, 'vet_id' => $vet_id]);
+    return $stmt->execute([
+        'nome' => $nome,
+        'animal' => $animal,
+        'raca' => $raca,
+        'tutor_id' => $tutor_id,
+        'vet_id' => $vet_id
+    ]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['add_paciente'])) {
-        // Adicionar um novo paciente
-        $nome = $_POST['nome'];
-        $animal = $_POST['animal'];
-        $raca = $_POST['raca'];
-        $tutor_id = $_POST['tutor_id'];
-        $vet_id = $_POST['vet_id'];
+        $nome = $_POST['tx_nome'] ?? '';
+        $animal = $_POST['tx_animal'] ?? '';
+        $raca = $_POST['tx_raca'] ?? '';
+        $tutor_id = $_POST['tutor_id'] ?? '';
+        $vet_id = $_POST['vet_id'] ?? '';
 
-        if (adicionarPaciente($pdo, $nome, $animal, $raca, $tutor_id, $vet_id)) {
-            // Redirecionar de volta para a página de gerenciamento de pacientes após a adição
-            header("Location: pacientes.php");
-            exit;
+        if (!empty($nome) && !empty($animal) && !empty($raca) && !empty($tutor_id) && !empty($vet_id)) {
+            if (adicionarPaciente($pdo, $nome, $animal, $raca, $tutor_id, $vet_id)) {
+                // Redirecionar de volta para a página de gerenciamento de pacientes após a adição
+                header("Location: pacientes.php");
+                exit;
+            } else {
+                echo "Falha ao adicionar paciente.";
+            }
         } else {
-            echo "Falha ao adicionar paciente.";
-        }
-    } else {
-        // Atualizar dados do paciente
-        $paciente_id = $_POST['id'];
-        $nome = $_POST['nome'];
-        $animal = $_POST['animal'];
-        $raca = $_POST['raca'];
-        $tutor_id = $_POST['tutor_id'];
-        $vet_id = $_POST['vet_id'];
-
-        if (atualizarPaciente($pdo, $paciente_id, $nome, $animal, $raca, $tutor_id, $vet_id)) {
-            // Atualização bem-sucedida
-            // Você pode adicionar feedback ao usuário aqui, se necessário
-        } else {
-            echo "Falha na atualização dos dados.";
+            echo "Por favor, preencha todos os campos obrigatórios.";
         }
     }
 }
+
 
 // Consulta para recuperar informações de pacientes
 $pacientes_query = "SELECT p.id, p.tx_nome, p.tx_animal, p.tx_raca, p.tutor_id, p.vet_id, t.tx_nome as tx_tutor, v.tx_nome as tx_veterinario
@@ -105,6 +100,7 @@ echo '<script>var pacientesData = ' . json_encode($pacientes_data) . ';</script>
 echo '<script>var tutoresData = ' . json_encode($tutores_data) . ';</script>';
 echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</script>';
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -218,18 +214,28 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2" />
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    <div id="dateDisplay"></div>
+
+                    <script>
+                    function updateDate() {
+                        const dateElement = document.getElementById('dateDisplay');
+                        const currentDate = new Date();
+                        const options = {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        };
+                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                            options); // Altere 'pt-BR' para o código de idioma desejado
+
+                        dateElement.textContent = `Hoje é ${formattedDate}.`;
+                    }
+
+                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
+                    updateDate(); // Chama a função para exibir a data inicial
+                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                    </script>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -281,7 +287,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
+                                    Sair
                                 </a>
                             </div>
                         </li>
@@ -291,22 +297,19 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Tutores</h1>
 
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">
-                                Tutores
-                            </h6>
+                            <h3 class="m-0 font-weight-bold text-primary">
+                                Pacientes
+                            </h3>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
                                             <th>Nome</th>
                                             <th>Animal</th>
                                             <th>Raça</th>
@@ -318,7 +321,6 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                     <tbody>
                                         <?php foreach ($pacientes_data as $paciente): ?>
                                         <tr>
-                                            <td><?php echo $paciente['id']; ?></td>
                                             <td contenteditable="true" class="editable-cell" data-field="tx_nome">
                                                 <?php echo $paciente['tx_nome']; ?>
                                             </td>
@@ -349,21 +351,33 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                                 </select>
                                             </td>
                                             <td>
-                                                <button class="btn btn-primary save-btn"
+                                                <button type="submit" class="btn btn-primary save-btn"
                                                     data-paciente-id="<?php echo $paciente['id']; ?>">
                                                     Salvar
                                                 </button>
+                                                <button class="btn btn-danger delete-btn"
+                                                    data-paciente-id="<?php echo $paciente['id']; ?>">
+                                                    Excluir
+                                                </button>
                                             </td>
+
                                         </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
+                                <!-- Botão para abrir o modal -->
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#modalAddPaciente">
+                                    Adicionar Paciente
+                                </button>
+
+                                <!-- Modal para adicionar paciente -->
                                 <div class="modal fade" id="modalAddPaciente" tabindex="-1" role="dialog"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    aria-labelledby="modalAddPacienteLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Adicionar Paciente
+                                                <h5 class="modal-title" id="modalAddPacienteLabel">Adicionar Paciente
                                                 </h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
@@ -371,50 +385,67 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <form id="add-paciente-form">
-                                                    <label for="nome">Nome:</label>
-                                                    <input type="text" id="add-nome" required><br>
-                                                    <label for="animal">Animal:</label>
-                                                    <input type="text" id="add-animal" required><br>
-                                                    <label for="raca">Raça:</label>
-                                                    <input type="text" id="add-raca" required><br>
+                                                <form method="post" id="addPatientForm">
+                                                    <div class="form-group">
+                                                        <label for="nome">Nome:</label>
+                                                        <input type="text" name="tx_nome" id="tx_nome"
+                                                            class="form-control" required>
+                                                    </div>
 
-                                                    <!-- Selecionar o tutor do paciente -->
-                                                    <label for="tutor_id">Tutor:</label>
-                                                    <select id="add-tutor" required>
-                                                        <?php foreach ($tutores_data as $tutor): ?>
-                                                        <option value="<?php echo $tutor['id']; ?>">
-                                                            <?php echo $tutor['tx_nome']; ?>
-                                                        </option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="animal">Animal:</label>
+                                                        <input type="text" name="tx_animal" id="tx_animal"
+                                                            class="form-control" required>
+                                                    </div>
 
-                                                    <!-- Selecionar o veterinário do paciente -->
-                                                    <label for="vet_id">Veterinário:</label>
-                                                    <select id="add-veterinario" required>
-                                                        <?php foreach ($veterinarios_data as $veterinario): ?>
-                                                        <option value="<?php echo $veterinario['id']; ?>">
-                                                            <?php echo $veterinario['tx_nome']; ?>
-                                                        </option>
-                                                        <?php endforeach; ?>
-                                                    </select>
+                                                    <div class="form-group">
+                                                        <label for "raca">Raça:</label>
+                                                        <input type="text" name="tx_raca" id="tx_raca"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="tutor_id">Tutor:</label>
+                                                        <select name="tutor_id" id="tutor_id" class="form-control"
+                                                            required>
+                                                            <?php
+                                                                foreach ($tutores_data as $tutor) {
+                                                                    echo '<option value="' . $tutor['id'] . '">' . $tutor['tx_nome'] . '</option>';
+                                                                }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+
+
+                                                    <div class="form-group">
+                                                        <label for="vet_id">Veterinário:</label>
+                                                        <select name="vet_id" id="vet_id" class="form-control" required>
+                                                            <?php
+                                                                foreach ($veterinarios_data as $veterinario) {
+                                                                    echo '<option value="' . $veterinario['id'] . '">' . $veterinario['tx_nome'] . '</option>';
+                                                                }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn-primary" name="add_paciente"
+                                                        id="addPatientButton">Adicionar Paciente</button>
+
+
                                                 </form>
                                             </div>
+
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
+                                                <button type="submit" class="btn btn-secondary"
                                                     data-dismiss="modal">Fechar</button>
-                                                <button type="button" class="btn btn-primary"
-                                                    id="add-paciente-btn">Adicionar Paciente</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#modalAddPaciente">
-                                    Adicionar Paciente
-                                </button>
+
+
+
 
                             </div>
                         </div>
@@ -450,17 +481,17 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Quer mesmo sair?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    Select "Logout" below if you are ready to end your current session.
+                    Clique em "Sair" se deseja encerrar sua sessão.
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">
-                        Cancel
+                        Cancelar
                     </button>
                     <a class="btn btn-primary" href="logout.php">Logout</a>
                 </div>
@@ -484,77 +515,95 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
 
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
+
+    <!-- Inclua a biblioteca jQuery (caso ainda não o tenha) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Inclua a biblioteca jQuery (caso ainda não o tenha) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
-    const saveButtons = document.querySelectorAll('.save-btn');
-    saveButtons.forEach((button) => {
-        button.addEventListener('click', (event) => {
-            const pacienteId = event.target.getAttribute('data-paciente-id');
-            const row = event.target.closest('tr');
-            const nome = row.querySelector('[data-field="tx_nome"]').textContent.trim();
-            const animal = row.querySelector('[data-field="tx_animal"]').textContent.trim();
-            const raca = row.querySelector('[data-field="tx_raca"]').textContent.trim();
-            const tutorSelect = row.querySelector('.tutor-select');
-            const tutorId = tutorSelect.options[tutorSelect.selectedIndex].value;
-            const veterinarioSelect = row.querySelector('.veterinario-select');
-            const veterinarioId = veterinarioSelect.options[veterinarioSelect.selectedIndex].value;
+    $(document).ready(function() {
+        // Adicione um evento de clique aos botões "Excluir"
+        $('.delete-btn').click(function() {
+            const pacienteId = $(this).data('paciente-id');
 
-            // Enviar os dados atualizados para o servidor usando uma solicitação AJAX
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'pacientes.php', true);
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.onload = function() {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    // Atualização bem-sucedida
-                    console.log('Paciente atualizado com sucesso.');
-                    // Adicionar feedback ao usuário, se necessário
-                } else {
-                    // Atualização falhou
-                    console.error('Falha na atualização do paciente.');
-                    // Adicionar tratamento de erro, se necessário
-                }
-            };
-
-            const data =
-                `id=${pacienteId}&nome=${nome}&animal=${animal}&raca=${raca}&tutor_id=${tutorId}&vet_id=${veterinarioId}`;
-            xhr.send(data);
+            // Confirmar com o usuário antes de excluir
+            if (confirm('Tem certeza de que deseja excluir este paciente?')) {
+                // Realizar uma solicitação AJAX para excluir o paciente
+                $.ajax({
+                    type: 'POST',
+                    url: 'excluir_paciente.php', // Crie um arquivo para a exclusão dos pacientes
+                    data: {
+                        id: pacienteId
+                    },
+                    success: function(data) {
+                        // Verificar a resposta do servidor
+                        if (data === 'success') {
+                            // Exclusão bem-sucedida
+                            console.log('Paciente excluído com sucesso.');
+                            // Recarregue a página ou atualize a tabela para refletir a exclusão
+                            location.reload();
+                        } else {
+                            // Exibir uma mensagem de erro se a exclusão falhar
+                            console.error('Falha ao excluir paciente.');
+                        }
+                    }
+                });
+            }
         });
     });
+    </script>
 
-    // Adicionar um ouvinte de eventos para o botão "Adicionar Paciente" no modal
-    const addPacienteBtn = document.getElementById('add-paciente-btn');
-    addPacienteBtn.addEventListener('click', () => {
-        const nome = document.getElementById('add-nome').value;
-        const animal = document.getElementById('add-animal').value;
-        const raca = document.getElementById('add-raca').value;
-        const tutorSelect = document.getElementById('add-tutor');
-        const tutorId = tutorSelect.options[tutorSelect.selectedIndex].value;
-        const veterinarioSelect = document.getElementById('add-veterinario');
-        const veterinarioId = veterinarioSelect.options[veterinarioSelect.selectedIndex].value;
+    <script>
+    $(document).ready(function() {
+        $('.save-btn').click(function() {
+            var pacienteId = $(this).data('paciente-id');
+            var row = $(this).closest('tr');
+            var nome = row.find('[data-field="tx_nome"]').text().trim();
+            var animal = row.find('[data-field="tx_animal"]').text().trim();
+            var raca = row.find('[data-field="tx_raca"]').text().trim();
+            var tutorId = row.find('.tutor-select').val();
+            var vetId = row.find('.veterinario-select').val();
 
-        // Enviar os dados do novo paciente para o servidor usando uma solicitação AJAX
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'pacientes.php', true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.onload = function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                // Adição bem-sucedida
-                console.log('Novo paciente adicionado com sucesso.');
-                // Atualizar a tabela de pacientes, se necessário
-                // Fechar o modal
-                $('#modalAddPaciente').modal('hide'); // Este é um comando jQuery
-                // Adicionar feedback ao usuário, se necessário
-            } else {
-                // Adição falhou
-                console.error('Falha na adição do paciente.');
-                // Adicionar tratamento de erro, se necessário
-            }
-        };
-
-        const data =
-            `nome=${nome}&animal=${animal}&raca=${raca}&tutor_id=${tutorId}&vet_id=${veterinarioId}`;
-        xhr.send(data);
+            // Realizar uma solicitação AJAX para atualizar o paciente
+            $.ajax({
+                type: 'POST',
+                url: 'atualizar_paciente.php', // Crie um arquivo PHP chamado atualizar_paciente.php
+                data: {
+                    id: pacienteId,
+                    nome: nome,
+                    animal: animal,
+                    raca: raca,
+                    tutor_id: tutorId,
+                    vet_id: vetId
+                },
+                success: function(response) {
+                    if (response === 'success') {
+                        // Atualização bem-sucedida
+                        console.log('Paciente atualizado com sucesso.');
+                    } else {
+                        // Atualização falhou
+                        console.error('Falha na atualização do paciente.');
+                    }
+                },
+                error: function() {
+                    console.error('Erro na solicitação AJAX.');
+                }
+            });
+        });
     });
     </script>
+
+
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
 </body>
 
 </html>
