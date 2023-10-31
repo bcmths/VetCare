@@ -10,6 +10,40 @@ if (!isset($_SESSION['user_id'])) {
 // Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
+function adicionarTutor($pdo, $nome, $email, $telefone, $endereco)
+{
+    $insert_query = "INSERT INTO tb_tutor (tx_nome, tx_email, nb_telefone, tx_endereco)
+                    VALUES (:nome, :email, :telefone, :endereco)";
+    $stmt = $pdo->prepare($insert_query);
+    return $stmt->execute([
+        'nome' => $nome,
+        'email' => $email,
+        'telefone' => $telefone,
+        'endereco' => $endereco
+    ]);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['add_tutor'])) {
+        $nome = $_POST['tx_nome'] ?? '';
+        $email = $_POST['tx_email'] ?? '';
+        $telefone = $_POST['nb_telefone'] ?? '';
+        $endereco = $_POST['tx_endereco'] ?? '';
+
+        if (!empty($nome) && !empty($email) && !empty($telefone) && !empty($endereco)) {
+            if (adicionarTutor($pdo, $nome, $email, $telefone, $endereco)) {
+                // Redirecionar de volta para a página de gerenciamento de pacientes após a adição
+                header("Location: tutores.php");
+                exit;
+            } else {
+                echo "Falha ao adicionar tutor.";
+            }
+        } else {
+            echo "Por favor, preencha todos os campos obrigatórios.";
+        }
+    }
+}
+
 // Consulta para recuperar informações de tutores
 $tutores_query = "SELECT id, tx_nome, tx_email, nb_telefone, tx_endereco FROM tb_tutor";
 $tutores_result = $pdo->query($tutores_query);
@@ -45,8 +79,6 @@ echo '<script>var veterinarioData = ' . json_encode([
     'nome' => $vet['tx_nome']
 ]) . ';</script>';
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -256,37 +288,103 @@ echo '<script>var veterinarioData = ' . json_encode([
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
                                             <th>Nome</th>
-                                            <th>Email</th>
+                                            <th>E-mail</th>
                                             <th>Telefone</th>
                                             <th>Endereço</th>
+                                            <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($tutores_data as $tutor): ?>
                                             <tr>
-                                                <td>
-                                                    <?php echo $tutor['id']; ?>
-                                                </td>
-                                                <td>
+
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_nome">
                                                     <?php echo $tutor['tx_nome']; ?>
                                                 </td>
-                                                <td>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_email">
                                                     <?php echo $tutor['tx_email']; ?>
                                                 </td>
-                                                <td>
+                                                <td contenteditable="true" class="editable-cell" data-field="nb_telefone">
                                                     <?php echo $tutor['nb_telefone']; ?>
                                                 </td>
-                                                <td>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_endereco">
                                                     <?php echo $tutor['tx_endereco']; ?>
+                                                </td>
+                                                <td>
+                                                    <button type="submit" class="btn btn-primary save-btn"
+                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                        Salvar
+                                                    </button>
+                                                    <button class="btn btn-danger delete-btn"
+                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                        Excluir
+                                                    </button>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
+
                                 </table>
+
+                                <!-- Botão para abrir o modal -->
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#modalAddTutor">
+                                    Adicionar Tutor
+                                </button>
+                                <!-- Modal para adicionar tutor -->
+                                <div class="modal fade" id="modalAddTutor" tabindex="-1" role="dialog"
+                                    aria-labelledby="modalAddTutorLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalAddTutorLabel">Adicionar Tutor</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="post" id="addTutorForm">
+                                                    <div class="form-group">
+                                                        <label for="nome">Nome:</label>
+                                                        <input type="text" name="tx_nome" id="tx_nome"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="email">E-mail:</label>
+                                                        <input type="email" name="tx_email" id="tx_email"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="telefone">Telefone:</label>
+                                                        <input type="tel" name="nb_telefone" id="nb_telefone"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="endereco">Endereço:</label>
+                                                        <input type="text" name="tx_endereco" id="tx_endereco"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn-primary" name="add_tutor"
+                                                        id="addTutorButton">Adicionar Tutor</button>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-secondary"
+                                                    data-dismiss="modal">Fechar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
+
                     </div>
 
                 </div>
@@ -353,6 +451,78 @@ echo '<script>var veterinarioData = ' . json_encode([
 
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Adicione um evento de clique aos botões "Excluir"
+            $('.delete-btn').click(function () {
+                const tutor_id = $(this).data('tutor-id');
+
+                // Confirmar com o usuário antes de excluir
+                if (confirm('Tem certeza de que deseja excluir este tutor?')) {
+                    // Realizar uma solicitação AJAX para excluir o paciente
+                    $.ajax({
+                        type: 'POST',
+                        url: 'excluir_tutor.php', // Crie um arquivo para a exclusão dos pacientes
+                        data: {
+                            id: tutor_id
+                        },
+                        success: function (data) {
+                            // Verificar a resposta do servidor
+                            if (data === 'success') {
+                                // Exclusão bem-sucedida
+                                console.log('Tutor excluído com sucesso.');
+                                // Recarregue a página ou atualize a tabela para refletir a exclusão
+                                location.reload();
+                            } else {
+                                // Exibir uma mensagem de erro se a exclusão falhar
+                                console.error('Falha ao excluir tutor.');
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.save-btn').click(function () {
+                var tutorId = $(this).data('tutor-id');
+                var row = $(this).closest('tr');
+                var nome = row.find('[data-field="tx_nome"]').text().trim();
+                var email = row.find('[data-field="tx_email"]').text().trim();
+                var telefone = row.find('[data-field="nb_telefone"]').text().trim();
+                var endereco = row.find('[data-field="tx_endereco"]').text().trim();
+
+                // Realizar uma solicitação AJAX para atualizar o paciente
+                $.ajax({
+                    type: 'POST',
+                    url: 'atualizar_tutor.php',
+                    data: {
+                        id: tutorId,
+                        nome: nome,
+                        email: email,
+                        telefone: telefone,
+                        endereco: endereco,
+                    },
+                    success: function (response) {
+                        if (response === 'success') {
+                            // Atualização bem-sucedida
+                            console.log('Tutor atualizado com sucesso.');
+                        } else {
+                            // Atualização falhou
+                            console.error('Falha na atualização do tutor.');
+                        }
+                    },
+                    error: function () {
+                        console.error('Erro na solicitação AJAX.');
+                    }
+                });
+            });
+        });
+    </script>
+
+
 </body>
 
 </html>

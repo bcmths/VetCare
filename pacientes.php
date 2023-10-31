@@ -10,22 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 // Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
-// Função para atualizar um paciente
-function atualizarPaciente($pdo, $paciente_id, $nome, $animal, $raca, $tutor_id, $vet_id)
-{
-    $update_query = "UPDATE tb_paciente
-                    SET tx_nome = :nome, tx_animal = :animal, tx_raca = :raca, tutor_id = :tutor_id, vet_id = :vet_id
-                    WHERE id = :id";
-    $stmt = $pdo->prepare($update_query);
-    return $stmt->execute([
-        'nome' => $nome,
-        'animal' => $animal,
-        'raca' => $raca,
-        'tutor_id' => $tutor_id,
-        'vet_id' => $vet_id,
-        'id' => $paciente_id,
-    ]);
-}
 
 // Função para adicionar um novo paciente
 function adicionarPaciente($pdo, $nome, $animal, $raca, $tutor_id, $vet_id)
@@ -311,7 +295,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
-                                            <th>Animal</th>
+                                            <th>Espécie</th>
                                             <th>Raça</th>
                                             <th>Tutor</th>
                                             <th>Veterinário</th>
