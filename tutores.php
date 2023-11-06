@@ -195,24 +195,24 @@ echo '<script>var veterinarioData = ' . json_encode([
                     <div id="dateDisplay"></div>
 
                     <script>
-                        function updateDate() {
-                            const dateElement = document.getElementById('dateDisplay');
-                            const currentDate = new Date();
-                            const options = {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            };
-                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                                options); // Altere 'pt-BR' para o código de idioma desejado
+                    function updateDate() {
+                        const dateElement = document.getElementById('dateDisplay');
+                        const currentDate = new Date();
+                        const options = {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        };
+                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                            options); // Altere 'pt-BR' para o código de idioma desejado
 
-                            dateElement.textContent = `Hoje é ${formattedDate}.`;
-                        }
+                        dateElement.textContent = `Hoje é ${formattedDate}.`;
+                    }
 
-                        // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                        updateDate(); // Chama a função para exibir a data inicial
-                        setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
+                    updateDate(); // Chama a função para exibir a data inicial
+                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -297,31 +297,31 @@ echo '<script>var veterinarioData = ' . json_encode([
                                     </thead>
                                     <tbody>
                                         <?php foreach ($tutores_data as $tutor): ?>
-                                            <tr>
+                                        <tr>
 
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_nome">
-                                                    <?php echo $tutor['tx_nome']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_email">
-                                                    <?php echo $tutor['tx_email']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="nb_telefone">
-                                                    <?php echo $tutor['nb_telefone']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_endereco">
-                                                    <?php echo $tutor['tx_endereco']; ?>
-                                                </td>
-                                                <td>
-                                                    <button type="submit" class="btn btn-primary save-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
-                                                        Salvar
-                                                    </button>
-                                                    <button class="btn btn-danger delete-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
-                                                        Excluir
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                            <td contenteditable="true" class="editable-cell" data-field="tx_nome">
+                                                <?php echo $tutor['tx_nome']; ?>
+                                            </td>
+                                            <td contenteditable="true" class="editable-cell" data-field="tx_email">
+                                                <?php echo $tutor['tx_email']; ?>
+                                            </td>
+                                            <td contenteditable="true" class="editable-cell" data-field="nb_telefone">
+                                                <?php echo $tutor['nb_telefone']; ?>
+                                            </td>
+                                            <td contenteditable="true" class="editable-cell" data-field="tx_endereco">
+                                                <?php echo $tutor['tx_endereco']; ?>
+                                            </td>
+                                            <td>
+                                                <button type="submit" class="btn btn-primary save-btn"
+                                                    data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                    Salvar
+                                                </button>
+                                                <button class="btn btn-danger delete-btn"
+                                                    data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                    Excluir
+                                                </button>
+                                            </td>
+                                        </tr>
                                         <?php endforeach; ?>
                                     </tbody>
 
@@ -453,75 +453,79 @@ echo '<script>var veterinarioData = ' . json_encode([
     <script src="js/demo/datatables-demo.js"></script>
 
     <script>
-        $(document).ready(function () {
-            // Adicione um evento de clique aos botões "Excluir"
-            $('.delete-btn').click(function () {
-                const tutor_id = $(this).data('tutor-id');
+    $(document).ready(function() {
+        // Adicione um evento de clique aos botões "Excluir"
+        $('.delete-btn').click(function() {
+            const tutor_id = $(this).data('tutor-id');
 
-                // Confirmar com o usuário antes de excluir
-                if (confirm('Tem certeza de que deseja excluir este tutor?')) {
-                    // Realizar uma solicitação AJAX para excluir o paciente
-                    $.ajax({
-                        type: 'POST',
-                        url: 'excluir_tutor.php', // Crie um arquivo para a exclusão dos pacientes
-                        data: {
-                            id: tutor_id
-                        },
-                        success: function (data) {
-                            // Verificar a resposta do servidor
-                            if (data === 'success') {
-                                // Exclusão bem-sucedida
-                                console.log('Tutor excluído com sucesso.');
-                                // Recarregue a página ou atualize a tabela para refletir a exclusão
-                                location.reload();
-                            } else {
-                                // Exibir uma mensagem de erro se a exclusão falhar
-                                console.error('Falha ao excluir tutor.');
-                            }
+            // Confirmar com o usuário antes de excluir
+            if (confirm('Tem certeza de que deseja excluir este tutor?')) {
+                // Realizar uma solicitação AJAX para excluir o paciente
+                $.ajax({
+                    type: 'POST',
+                    url: 'excluir_tutor.php', // Crie um arquivo para a exclusão dos pacientes
+                    data: {
+                        id: tutor_id
+                    },
+                    success: function(data) {
+                        // Verificar a resposta do servidor
+                        if (data === 'success') {
+                            // Exclusão bem-sucedida
+                            console.log('Tutor excluído com sucesso.');
+                            // Recarregue a página ou atualize a tabela para refletir a exclusão
+                            location.reload();
+                        } else {
+                            // Exibir uma mensagem de erro se a exclusão falhar
+                            console.error('Falha ao excluir tutor.');
                         }
-                    });
+                    }
+                });
+            }
+        });
+    });
+    </script>
+    <script>
+    $(document).ready(function() {
+        $('.save-btn').click(function() {
+            var tutorId = $(this).data('tutor-id');
+            var row = $(this).closest('tr');
+            var nome = row.find('[data-field="tx_nome"]').text().trim();
+            var email = row.find('[data-field="tx_email"]').text().trim();
+            var telefone = row.find('[data-field="nb_telefone"]').text().trim();
+            var endereco = row.find('[data-field="tx_endereco"]').text().trim();
+
+            // Realizar uma solicitação AJAX para atualizar o paciente
+            $.ajax({
+                type: 'POST',
+                url: 'atualizar_tutor.php',
+                data: {
+                    id: tutorId,
+                    nome: nome,
+                    email: email,
+                    telefone: telefone,
+                    endereco: endereco,
+                },
+                success: function(response) {
+                    if (response === 'success') {
+                        // Atualização bem-sucedida
+                        console.log('Tutor atualizado com sucesso.');
+                    } else {
+                        // Atualização falhou
+                        console.error('Falha na atualização do tutor.');
+                    }
+                },
+                error: function() {
+                    console.error('Erro na solicitação AJAX.');
                 }
             });
         });
+    });
     </script>
-    <script>
-        $(document).ready(function () {
-            $('.save-btn').click(function () {
-                var tutorId = $(this).data('tutor-id');
-                var row = $(this).closest('tr');
-                var nome = row.find('[data-field="tx_nome"]').text().trim();
-                var email = row.find('[data-field="tx_email"]').text().trim();
-                var telefone = row.find('[data-field="nb_telefone"]').text().trim();
-                var endereco = row.find('[data-field="tx_endereco"]').text().trim();
-
-                // Realizar uma solicitação AJAX para atualizar o paciente
-                $.ajax({
-                    type: 'POST',
-                    url: 'atualizar_tutor.php',
-                    data: {
-                        id: tutorId,
-                        nome: nome,
-                        email: email,
-                        telefone: telefone,
-                        endereco: endereco,
-                    },
-                    success: function (response) {
-                        if (response === 'success') {
-                            // Atualização bem-sucedida
-                            console.log('Tutor atualizado com sucesso.');
-                        } else {
-                            // Atualização falhou
-                            console.error('Falha na atualização do tutor.');
-                        }
-                    },
-                    error: function () {
-                        console.error('Erro na solicitação AJAX.');
-                    }
-                });
-            });
-        });
-    </script>
-
+    <style>
+    .table-responsive {
+        overflow-x: hidden;
+    }
+    </style>
 
 </body>
 

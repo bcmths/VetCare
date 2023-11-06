@@ -87,7 +87,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 
 <head>
     <meta charset="utf-8" />
@@ -294,12 +294,12 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Nome</th>
-                                            <th>Espécie</th>
-                                            <th>Raça</th>
-                                            <th>Tutor</th>
-                                            <th>Veterinário</th>
-                                            <th>Ações</th>
+                                            <th width="10%">Nome</th>
+                                            <th width="15%">Espécie</th>
+                                            <th width="10%">Raça</th>
+                                            <th width="15%">Tutor</th>
+                                            <th width="15%">Veterinário</th>
+                                            <th width="5%">Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -483,7 +483,6 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
         </div>
     </div>
 
-    <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
@@ -499,12 +498,6 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
 
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
-
-    <!-- Inclua a biblioteca jQuery (caso ainda não o tenha) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Inclua a biblioteca jQuery (caso ainda não o tenha) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
     $(document).ready(function() {
@@ -579,14 +572,11 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
     });
     </script>
 
-
-
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+    <style>
+    .table-responsive {
+        overflow-x: hidden;
+    }
+    </style>
 
 </body>
 
