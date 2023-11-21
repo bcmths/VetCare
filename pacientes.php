@@ -96,7 +96,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>SB Admin 2 - Dashboard</title>
+    <title>VetCare - Pacientes</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -139,7 +139,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="veterinario/veterinario.php">
+                <a class="nav-link" href="veterinarios.php">
                     <i class="fa fa-user-md"></i>
                     <span>Veterinários</span></a>
             </li>
@@ -171,7 +171,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="usuario/usuario.php">
+                <a class="nav-link" href="usuarios.php">
                     <i class="fa fa-users"></i>
                     <span>Usuários</span></a>
             </li>

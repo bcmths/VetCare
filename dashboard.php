@@ -33,44 +33,44 @@ $prontuarios_result = $pdo->query($prontuarios_query);
 <head>
     <title>Dashboard - Sistema Veterinário</title>
     <style>
-    /* Estilos para a barra lateral */
-    .sidenav {
-        height: 100%;
-        width: 200px;
-        position: fixed;
-        top: 0;
-        left: 0;
-        background-color: #333;
-        /* Cor de fundo da barra lateral */
-        padding-top: 20px;
-    }
+        /* Estilos para a barra lateral */
+        .sidenav {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            /* Cor de fundo da barra lateral */
+            padding-top: 20px;
+        }
 
-    .sidenav a {
-        padding: 10px 15px;
-        text-align: center;
-        text-decoration: none;
-        font-size: 16px;
-        color: #fff;
-        /* Cor do texto dos botões */
-        display: block;
-    }
+        .sidenav a {
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            color: #fff;
+            /* Cor do texto dos botões */
+            display: block;
+        }
 
-    .sidenav a:hover {
-        background-color: #4CAF50;
-        /* Cor de fundo dos botões ao passar o mouse */
-    }
+        .sidenav a:hover {
+            background-color: #4CAF50;
+            /* Cor de fundo dos botões ao passar o mouse */
+        }
     </style>
 </head>
 
 <body>
     <!-- Barra lateral -->
     <div class="sidenav">
-        <a href="veterinario/veterinario.php">Veterinário</a>
+        <a href="veterinarios.php">Veterinário</a>
         <a href="paciente/paciente.php">Paciente</a>
         <a href="tutor.php">Tutor</a>
         <a href="prontuario.php">Prontuário</a>
         <a href="sinais/sinaisclinicos.php">Sinais Clínicos</a>
-        <a href="usuario/usuario.php">Usuário</a>
+        <a href="usuarios.php">Usuário</a>
     </div>
 
     <!-- Conteúdo principal -->

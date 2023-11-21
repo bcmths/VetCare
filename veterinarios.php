@@ -10,33 +10,29 @@ if (!isset($_SESSION['user_id'])) {
 // Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
-function adicionarTutor($pdo, $nome, $email, $telefone, $endereco)
+function adicionarVeterinario($pdo, $nome, $genero)
 {
-    $insert_query = "INSERT INTO tb_tutor (tx_nome, tx_email, nb_telefone, tx_endereco)
-                    VALUES (:nome, :email, :telefone, :endereco)";
+    $insert_query = "INSERT INTO tb_vet (tx_nome, tx_genero)
+                    VALUES (:nome, :genero)";
     $stmt = $pdo->prepare($insert_query);
     return $stmt->execute([
         'nome' => $nome,
-        'email' => $email,
-        'telefone' => $telefone,
-        'endereco' => $endereco
+        'genero' => $genero
     ]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add_tutor'])) {
+    if (isset($_POST['add_veterinario'])) {
         $nome = $_POST['tx_nome'] ?? '';
-        $email = $_POST['tx_email'] ?? '';
-        $telefone = $_POST['nb_telefone'] ?? '';
-        $endereco = $_POST['tx_endereco'] ?? '';
+        $genero = $_POST['tx_genero'] ?? '';
 
-        if (!empty($nome) && !empty($email) && !empty($telefone) && !empty($endereco)) {
-            if (adicionarTutor($pdo, $nome, $email, $telefone, $endereco)) {
-                // Redirecionar de volta para a página de gerenciamento de pacientes após a adição
-                header("Location: tutores.php");
+        if (!empty($nome) && !empty($genero)) {
+            if (adicionarVeterinario($pdo, $nome, $genero)) {
+                // Redirecionar de volta para a página de gerenciamento de veterinários após a adição
+                header("Location: veterinarios.php");
                 exit;
             } else {
-                echo "Falha ao adicionar tutor.";
+                echo "Falha ao adicionar veterinário.";
             }
         } else {
             echo "Por favor, preencha todos os campos obrigatórios.";
@@ -44,41 +40,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Consulta para recuperar informações de tutores
-$tutores_query = "SELECT id, tx_nome, tx_email, nb_telefone, tx_endereco FROM tb_tutor";
-$tutores_result = $pdo->query($tutores_query);
+// Consulta para recuperar informações de veterinários
+$veterinarios_query = "SELECT id, tx_nome, tx_genero FROM tb_vet";
+$veterinarios_result = $pdo->query($veterinarios_query);
 
-// Inserir os dados dos tutores no HTML como um objeto JavaScript
-$tutores_data = [];
+// Inserir os dados dos veterinários no HTML como um objeto JavaScript
+$veterinarios_data = [];
 
-while ($row = $tutores_result->fetch(PDO::FETCH_ASSOC)) {
-    $tutores_data[] = $row;
+while ($row = $veterinarios_result->fetch(PDO::FETCH_ASSOC)) {
+    $veterinarios_data[] = $row;
 }
 
-// Consulta para recuperar informações do veterinário
+// Consulta para recuperar informações do veterinário logado
 $usuario_id = $_SESSION['user_id'];
-$vet_query = "SELECT tb_vet.tx_nome, tb_vet.tx_genero FROM tb_vet
-    JOIN tb_usuario ON tb_vet.id = tb_usuario.vet_id
-    WHERE tb_usuario.id = :usuario_id";
+$vet_query = "SELECT tx_nome, tx_genero FROM tb_vet WHERE id = :usuario_id";
 $stmt = $pdo->prepare($vet_query);
 $stmt->execute(['usuario_id' => $usuario_id]);
 $vet = $stmt->fetch();
 
-if ($vet['tx_genero'] === 'Masculino') {
-    $prefixo = 'Dr.';
-} elseif ($vet['tx_genero'] === 'Feminino') {
-    $prefixo = 'Dra.';
-} else {
-    $prefixo = '';
-}
-
 // Inserir os dados do veterinário no HTML como um objeto JavaScript
-echo '<script>var tutoresData = ' . json_encode($tutores_data) . ';</script>';
+echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</script>';
 echo '<script>var veterinarioData = ' . json_encode([
-    'prefixo' => $prefixo,
-    'nome' => $vet['tx_nome']
+    'nome' => $vet['tx_nome'],
+    'genero' => $vet['tx_genero']
 ]) . ';</script>';
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -90,7 +77,7 @@ echo '<script>var veterinarioData = ' . json_encode([
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>VetCare - Tutores</title>
+    <title>VetCare - Veterinários</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -165,10 +152,22 @@ echo '<script>var veterinarioData = ' . json_encode([
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="usuarios.php">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#senhaMasterModal">
                     <i class="fa fa-users"></i>
-                    <span>Usuários</span></a>
+                    <span>Usuários</span>
+                </a>
             </li>
+
+            <script>
+                // Adicionar evento de clique ao link de navegação
+                $('li.nav-item a.nav-link[href="#"]').on('click', function (e) {
+                    e.preventDefault();
+                    // Exibir o modal
+                    $('#senhaMasterModal').modal('show');
+                });
+            </script>
+
+
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block" />
@@ -250,9 +249,9 @@ echo '<script>var veterinarioData = ' . json_encode([
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="perfil.php">
+                                <a class="dropdown-item" href="#">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Perfil
+                                    Profile
                                 </a>
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -280,7 +279,7 @@ echo '<script>var veterinarioData = ' . json_encode([
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h3 class="m-0 font-weight-bold text-primary">
-                                Tutores
+                                Veterinários
                             </h3>
                         </div>
                         <div class="card-body">
@@ -289,98 +288,89 @@ echo '<script>var veterinarioData = ' . json_encode([
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
-                                            <th>E-mail</th>
-                                            <th>Telefone</th>
-                                            <th>Endereço</th>
+                                            <th>Gênero</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($tutores_data as $tutor): ?>
+                                        <?php foreach ($veterinarios_data as $veterinario): ?>
                                             <tr>
-
                                                 <td contenteditable="true" class="editable-cell" data-field="tx_nome">
-                                                    <?php echo $tutor['tx_nome']; ?>
+                                                    <?php echo $veterinario['tx_nome']; ?>
                                                 </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_email">
-                                                    <?php echo $tutor['tx_email']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="nb_telefone">
-                                                    <?php echo $tutor['nb_telefone']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_endereco">
-                                                    <?php echo $tutor['tx_endereco']; ?>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_genero">
+                                                    <?php echo $veterinario['tx_genero']; ?>
                                                 </td>
                                                 <td>
                                                     <button type="submit" class="btn btn-primary save-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                        data-veterinario-id="<?php echo $veterinario['id']; ?>">
                                                         Salvar
                                                     </button>
                                                     <button class="btn btn-danger delete-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                        data-veterinario-id="<?php echo $veterinario['id']; ?>">
                                                         Excluir
                                                     </button>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
-
                                 </table>
+
 
                                 <!-- Botão para abrir o modal -->
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#modalAddTutor">
-                                    Adicionar Tutor
+                                    data-target="#modalAddVeterinario">
+                                    Adicionar Veterinário(a)
                                 </button>
+
                                 <!-- Modal para adicionar tutor -->
-                                <div class="modal fade" id="modalAddTutor" tabindex="-1" role="dialog"
-                                    aria-labelledby="modalAddTutorLabel" aria-hidden="true">
+                                <div class="modal fade" id="modalAddVeterinario" tabindex="-1" role="dialog"
+                                    aria-labelledby="modalAddVeterinarioLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="modalAddTutorLabel">Adicionar Tutor</h5>
+
+                                                <h5 class="modal-title" i d="modalAddVeterinarioLabel">Adicionar
+                                                    Veterinário</h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <form method="post" id="addTutorForm">
+                                                <form method="post" id="addVeterinarioForm">
                                                     <div class="form-group">
                                                         <label for="nome">Nome:</label>
                                                         <input type="text" name="tx_nome" id="tx_nome"
                                                             class="form-control" required>
                                                     </div>
 
-                                                    <div class="form-group">
-                                                        <label for="email">E-mail:</label>
-                                                        <input type="email" name="tx_email" id="tx_email"
-                                                            class="form-control" required>
-                                                    </div>
 
                                                     <div class="form-group">
-                                                        <label for="telefone">Telefone:</label>
-                                                        <input type="tel" name="nb_telefone" id="nb_telefone"
-                                                            class="form-control" required>
+                                                        <label for="genero">Gênero:</label>
+                                                        <select name="tx_genero" id="tx_genero" class="form-control"
+                                                            required>
+                                                            <option value="Masculino">Masculino</option>
+                                                            <option value="Feminino">Feminino</option>
+                                                            <!-- Adicione mais opções de acordo com sua necessidade -->
+                                                        </select>
+
                                                     </div>
 
-                                                    <div class="form-group">
-                                                        <label for="endereco">Endereço:</label>
-                                                        <input type="text" name="tx_endereco" id="tx_endereco"
-                                                            class="form-control" required>
-                                                    </div>
+                                                    <!-- Adicione mais campos conforme necessário para veterinários -->
 
-                                                    <button type="submit" class="btn btn-primary" name="add_tutor"
-                                                        id="addTutorButton">Adicionar Tutor</button>
+                                                    <button type="submit" class="btn btn-primary" name="add_veterinario"
+                                                        id="addVeterinarioButton">Adicionar Veterinário</button>
                                                 </form>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="submit" class="btn btn-secondary"
+                                                <button type="button" class="btn btn-secondary"
                                                     data-dismiss="modal">Fechar</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
 
                             </div>
                         </div>
@@ -439,6 +429,13 @@ echo '<script>var veterinarioData = ' . json_encode([
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
@@ -446,7 +443,7 @@ echo '<script>var veterinarioData = ' . json_encode([
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datata bles/jquery.dataTables.min.js"></script>
     <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
@@ -456,27 +453,27 @@ echo '<script>var veterinarioData = ' . json_encode([
         $(document).ready(function () {
             // Adicione um evento de clique aos botões "Excluir"
             $('.delete-btn').click(function () {
-                const usuario_id = $(this).data('usuario-id');
+                const veterinario_id = $(this).data('veterinario-id');
 
                 // Confirmar com o usuário antes de excluir
-                if (confirm('Tem certeza de que deseja excluir este usuário?')) {
-                    // Realizar uma solicitação AJAX para excluir o usuário
+                if (confirm('Tem certeza de que deseja excluir este veterinário?')) {
+                    // Realizar uma solicitação AJAX para excluir o veterinário
                     $.ajax({
                         type: 'POST',
-                        url: 'excluir_usuario.php', // Crie um arquivo para a exclusão dos usuários
+                        url: 'excluir_veterinario.php', // Crie um arquivo para a exclusão dos veterinários
                         data: {
-                            id: usuario_id
+                            id: veterinario_id
                         },
                         success: function (data) {
                             // Verificar a resposta do servidor
                             if (data === 'success') {
                                 // Exclusão bem-sucedida
-                                console.log('Usuário excluído com sucesso.');
+                                console.log('Veterinário excluído com sucesso.');
                                 // Recarregue a página ou atualize a tabela para refletir a exclusão
                                 location.reload();
                             } else {
                                 // Exibir uma mensagem de erro se a exclusão falhar
-                                console.error('Falha ao excluir usuário.');
+                                console.error('Falha ao excluir veterinário.');
                             }
                         }
                     });
@@ -488,29 +485,27 @@ echo '<script>var veterinarioData = ' . json_encode([
     <script>
         $(document).ready(function () {
             $('.save-btn').click(function () {
-                var usuarioId = $(this).data('usuario-id');
+                var veterinarioId = $(this).data('veterinario-id');
                 var row = $(this).closest('tr');
-                var nomeUsuario = row.find('[data-field="tx_usuario"]').text().trim();
-                var senha = row.find('[data-field="tx_senha"]').text().trim();
-                var vetId = row.find('[data-field="vet_id"]').val().trim();
+                var nome = row.find('[data-field="tx_nome"]').text().trim();
+                var genero = row.find('[data-field="tx_genero"]').text().trim();
 
-                // Realizar uma solicitação AJAX para atualizar o usuário
+                // Realizar uma solicitação AJAX para atualizar o veterinário
                 $.ajax({
                     type: 'POST',
-                    url: 'atualizar_usuario.php',
+                    url: 'atualizar_veterinario.php',
                     data: {
-                        id: usuarioId,
-                        nomeUsuario: nomeUsuario,
-                        senha: senha,
-                        vetId: vetId
+                        id: veterinarioId,
+                        nome: nome,
+                        genero: genero
                     },
                     success: function (response) {
                         if (response === 'success') {
                             // Atualização bem-sucedida
-                            console.log('Usuário atualizado com sucesso.');
+                            console.log('Veterinário atualizado com sucesso.');
                         } else {
                             // Atualização falhou
-                            console.error('Falha na atualização do usuário.');
+                            console.error('Falha na atualização do veterinário.');
                         }
                     },
                     error: function () {
@@ -520,6 +515,8 @@ echo '<script>var veterinarioData = ' . json_encode([
             });
         });
     </script>
+
+
     <style>
         .table-responsive {
             overflow-x: hidden;

@@ -119,7 +119,7 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="veterinario/veterinario.php">
+                <a class="nav-link" href="veterinarios.php">
                     <i class="fa fa-user-md"></i>
                     <span>Veterinários</span></a>
             </li>
@@ -145,15 +145,16 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="prontuarios.php">
                     <i class="fa fa-file-medical"></i>
                     <span>Prontuários</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="usuario/usuario.php">
+                <a class="nav-link" href="usuarios.php">
                     <i class="fa fa-users"></i>
-                    <span>Usuários</span></a>
+                    <span>Usuários</span>
+                </a>
             </li>
 
             <!-- Divider -->
@@ -238,18 +239,11 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="perfil.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    Perfil
                                 </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
+
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -273,8 +267,9 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
 
                     <!-- Content Row -->
                     <div class="row">
+
                         <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="col-xl-4 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -295,7 +290,7 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
                         </div>
 
                         <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="col-xl-4 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -316,7 +311,7 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
                         </div>
 
                         <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="col-xl-4 col-md-6 mb-4">
                             <div class="card border-left-info shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -342,27 +337,6 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Avaliações Pendentes
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                18
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fa fa-question fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>

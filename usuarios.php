@@ -10,33 +10,31 @@ if (!isset($_SESSION['user_id'])) {
 // Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
-function adicionarTutor($pdo, $nome, $email, $telefone, $endereco)
+function adicionarUsuario($pdo, $usuario, $senha, $vet_id)
 {
-    $insert_query = "INSERT INTO tb_tutor (tx_nome, tx_email, nb_telefone, tx_endereco)
-                    VALUES (:nome, :email, :telefone, :endereco)";
+    $insert_query = "INSERT INTO tb_usuario (tx_usuario, tx_senha, vet_id)
+                    VALUES (:usuario, :senha, :vet_id)";
     $stmt = $pdo->prepare($insert_query);
     return $stmt->execute([
-        'nome' => $nome,
-        'email' => $email,
-        'telefone' => $telefone,
-        'endereco' => $endereco
+        'usuario' => $usuario,
+        'senha' => $senha,
+        'vet_id' => $vet_id
     ]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add_tutor'])) {
-        $nome = $_POST['tx_nome'] ?? '';
-        $email = $_POST['tx_email'] ?? '';
-        $telefone = $_POST['nb_telefone'] ?? '';
-        $endereco = $_POST['tx_endereco'] ?? '';
+    if (isset($_POST['add_usuario'])) {
+        $usuario = $_POST['tx_usuario'] ?? '';
+        $senha = $_POST['tx_senha'] ?? '';
+        $vet_id = $_POST['vet_id'] ?? '';
 
-        if (!empty($nome) && !empty($email) && !empty($telefone) && !empty($endereco)) {
-            if (adicionarTutor($pdo, $nome, $email, $telefone, $endereco)) {
-                // Redirecionar de volta para a página de gerenciamento de pacientes após a adição
-                header("Location: tutores.php");
+        if (!empty($usuario) && !empty($senha) && !empty($vet_id)) {
+            if (adicionarUsuario($pdo, $usuario, $senha, $vet_id)) {
+                // Redirecionar de volta para a página de gerenciamento de usuários após a adição
+                header("Location: usuarios.php");
                 exit;
             } else {
-                echo "Falha ao adicionar tutor.";
+                echo "Falha ao adicionar usuário.";
             }
         } else {
             echo "Por favor, preencha todos os campos obrigatórios.";
@@ -44,41 +42,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Consulta para recuperar informações de tutores
-$tutores_query = "SELECT id, tx_nome, tx_email, nb_telefone, tx_endereco FROM tb_tutor";
-$tutores_result = $pdo->query($tutores_query);
+// Consulta para recuperar informações de usuários
+// Obtendo dados dos veterinários
+$veterinarios_query = "SELECT id, tx_nome FROM tb_vet";
+$veterinarios_result = $pdo->query($veterinarios_query);
 
-// Inserir os dados dos tutores no HTML como um objeto JavaScript
-$tutores_data = [];
+// Obtendo dados dos usuários
+$usuarios_query = "SELECT id, tx_usuario, tx_senha, vet_id FROM tb_usuario";
+$usuarios_result = $pdo->query($usuarios_query);
 
-while ($row = $tutores_result->fetch(PDO::FETCH_ASSOC)) {
-    $tutores_data[] = $row;
+// Construindo array de veterinários
+$veterinarios_data = [];
+while ($row = $veterinarios_result->fetch(PDO::FETCH_ASSOC)) {
+    $veterinarios_data[] = $row;
 }
 
-// Consulta para recuperar informações do veterinário
+// Construindo array de usuários
+$usuarios_data = [];
+while ($row = $usuarios_result->fetch(PDO::FETCH_ASSOC)) {
+    $usuarios_data[] = $row;
+}
+
+// Consulta para recuperar informações do usuário logado
 $usuario_id = $_SESSION['user_id'];
-$vet_query = "SELECT tb_vet.tx_nome, tb_vet.tx_genero FROM tb_vet
-    JOIN tb_usuario ON tb_vet.id = tb_usuario.vet_id
-    WHERE tb_usuario.id = :usuario_id";
-$stmt = $pdo->prepare($vet_query);
+$usuario_query = "SELECT tx_usuario, tx_senha, vet_id FROM tb_usuario WHERE id = :usuario_id";
+$stmt = $pdo->prepare($usuario_query);
 $stmt->execute(['usuario_id' => $usuario_id]);
-$vet = $stmt->fetch();
+$usuario = $stmt->fetch();
 
-if ($vet['tx_genero'] === 'Masculino') {
-    $prefixo = 'Dr.';
-} elseif ($vet['tx_genero'] === 'Feminino') {
-    $prefixo = 'Dra.';
-} else {
-    $prefixo = '';
-}
 
-// Inserir os dados do veterinário no HTML como um objeto JavaScript
-echo '<script>var tutoresData = ' . json_encode($tutores_data) . ';</script>';
-echo '<script>var veterinarioData = ' . json_encode([
-    'prefixo' => $prefixo,
-    'nome' => $vet['tx_nome']
+// Inserir os dados do usuário no HTML como um objeto JavaScript
+echo '<script>var usuariosData = ' . json_encode($usuarios_data) . ';</script>';
+echo '<script>var usuarioData = ' . json_encode([
+    'nome' => $usuario['tx_usuario'],
+    'senha' => $usuario['tx_senha'],
+    'vet_id' => $usuario['vet_id']
 ]) . ';</script>';
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -90,7 +92,7 @@ echo '<script>var veterinarioData = ' . json_encode([
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>VetCare - Tutores</title>
+    <title>VetCare - Usuários</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -165,10 +167,87 @@ echo '<script>var veterinarioData = ' . json_encode([
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="usuarios.php">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#senhaMasterModal">
                     <i class="fa fa-users"></i>
-                    <span>Usuários</span></a>
+                    <span>Usuários</span>
+                </a>
             </li>
+
+
+            <script>
+                function verificarSenhaMaster() {
+                    var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
+                    var senhaMasterCorreta = "sisvet";
+
+                    // Enviar a senha master para verificar no lado do servidor
+                    $.ajax({
+                        type: 'POST',
+                        url: 'verificar_senha_master.php',
+                        data: {
+                            verificar_senha_master: true,
+                            senha_master: senhaMasterDigitada
+                        },
+                        success: function (data) {
+                            if (data === 'success') {
+                                // Senha master verificada com sucesso, recarregar a página de usuários
+                                window.location.href = 'usuarios.php';
+                            } else {
+                                // Senha master incorreta, exibir uma mensagem de erro
+                                alert("Senha Master incorreta. Tente novamente.");
+                            }
+                        },
+                        error: function () {
+                            console.error('Erro na solicitação AJAX.');
+                        }
+                    });
+                }
+            </script>
+
+            <script>
+                $(document).ready(function () {
+                    // Inicializar o modal
+                    $('#senhaMasterModal').modal({
+                        backdrop: 'static', // Evitar fechar clicando fora do modal
+                        keyboard: false // Evitar fechar pressionando a tecla Esc
+                    });
+
+                    // Adicionar evento de clique ao link de navegação
+                    $('li.nav-item a.nav-link[href="#"]').on('click', function (e) {
+                        e.preventDefault();
+                        // Exibir o modal
+                        $('#senhaMasterModal').modal('show');
+                    });
+                });
+            </script>
+
+
+
+            <!-- Modal para a senha master -->
+            <div class="modal fade" id="senhaMasterModal" tabindex="-1" role="dialog"
+                aria-labelledby="senhaMasterModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="senhaMasterModalLabel">Digite a Senha Master</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="senhaMasterForm">
+                                <div class="form-group">
+                                    <label for="senhaMaster">Senha Master:</label>
+                                    <input type="password" class="form-control" id="senhaMaster" required>
+                                </div>
+                                <button type="button" class="btn btn-primary"
+                                    onclick="verificarSenhaMaster()">Confirmar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block" />
@@ -280,110 +359,124 @@ echo '<script>var veterinarioData = ' . json_encode([
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h3 class="m-0 font-weight-bold text-primary">
-                                Tutores
+                                Usuários
                             </h3>
                         </div>
+
+
+                        <!-- Usuário.php -->
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Nome</th>
-                                            <th>E-mail</th>
-                                            <th>Telefone</th>
-                                            <th>Endereço</th>
+                                            <th>Nome de Usuário</th>
+                                            <th>Senha</th>
+                                            <th>Veterinário</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($tutores_data as $tutor): ?>
+                                        <?php foreach ($usuarios_data as $usuario): ?>
                                             <tr>
-
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_nome">
-                                                    <?php echo $tutor['tx_nome']; ?>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_usuario">
+                                                    <?php echo $usuario['tx_usuario']; ?>
                                                 </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_email">
-                                                    <?php echo $tutor['tx_email']; ?>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_senha">
+                                                    <?php echo $usuario['tx_senha']; ?>
                                                 </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="nb_telefone">
-                                                    <?php echo $tutor['nb_telefone']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_endereco">
-                                                    <?php echo $tutor['tx_endereco']; ?>
+                                                <td>
+                                                    <?php
+                                                    // Obtendo o nome do veterinário associado ao usuário
+                                                    $nomeDoVet = "";
+                                                    foreach ($veterinarios_data as $veterinario) {
+                                                        if ($veterinario['id'] == $usuario['vet_id']) {
+                                                            $nomeDoVet = $veterinario['tx_nome'];
+                                                            break;
+                                                        }
+                                                    }
+                                                    echo $nomeDoVet;
+                                                    ?>
                                                 </td>
                                                 <td>
                                                     <button type="submit" class="btn btn-primary save-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                        data-usuario-id="<?php echo $usuario['id']; ?>">
                                                         Salvar
                                                     </button>
                                                     <button class="btn btn-danger delete-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                        data-usuario-id="<?php echo $usuario['id']; ?>">
                                                         Excluir
                                                     </button>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
-
                                 </table>
 
                                 <!-- Botão para abrir o modal -->
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#modalAddTutor">
-                                    Adicionar Tutor
+                                    data-target="#modalAddUsuario">
+                                    Adicionar Usuário
                                 </button>
-                                <!-- Modal para adicionar tutor -->
-                                <div class="modal fade" id="modalAddTutor" tabindex="-1" role="dialog"
-                                    aria-labelledby="modalAddTutorLabel" aria-hidden="true">
+
+                                <!-- Modal para adicionar usuário -->
+                                <div class="modal fade" id="modalAddUsuario" tabindex="-1" role="dialog"
+                                    aria-labelledby="modalAddUsuarioLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="modalAddTutorLabel">Adicionar Tutor</h5>
+                                                <h5 class="modal-title" id="modalAddUsuarioLabel">Adicionar Usuário</h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <form method="post" id="addTutorForm">
+                                                <form method="post" id="addUsuarioForm"
+                                                    onsubmit="return validarFormulario()">
                                                     <div class="form-group">
-                                                        <label for="nome">Nome:</label>
-                                                        <input type="text" name="tx_nome" id="tx_nome"
+                                                        <label for="tx_usuario">Nome de Usuário:</label>
+                                                        <input type="text" name="tx_usuario" id="tx_usuario"
                                                             class="form-control" required>
                                                     </div>
-
                                                     <div class="form-group">
-                                                        <label for="email">E-mail:</label>
-                                                        <input type="email" name="tx_email" id="tx_email"
+                                                        <label for="tx_senha">Senha:</label>
+                                                        <input type="password" name="tx_senha" id="tx_senha"
                                                             class="form-control" required>
                                                     </div>
-
                                                     <div class="form-group">
-                                                        <label for="telefone">Telefone:</label>
-                                                        <input type="tel" name="nb_telefone" id="nb_telefone"
-                                                            class="form-control" required>
+                                                        <label for="tx_confirmar_senha">Confirmar Senha:</label>
+                                                        <input type="password" name="tx_confirmar_senha"
+                                                            id="tx_confirmar_senha" class="form-control" required>
                                                     </div>
-
                                                     <div class="form-group">
-                                                        <label for="endereco">Endereço:</label>
-                                                        <input type="text" name="tx_endereco" id="tx_endereco"
-                                                            class="form-control" required>
+                                                        <label for="vet_id">Veterinário:</label>
+                                                        <select name="vet_id" id="vet_id" class="form-control" required>
+                                                            <?php foreach ($veterinarios_data as $veterinario): ?>
+                                                                <option value="<?php echo $veterinario['id']; ?>">
+                                                                    <?php echo $veterinario['tx_nome']; ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
                                                     </div>
-
-                                                    <button type="submit" class="btn btn-primary" name="add_tutor"
-                                                        id="addTutorButton">Adicionar Tutor</button>
+                                                    <!-- Adicione mais campos conforme necessário para usuários -->
+                                                    <button type="submit" class="btn btn-primary" name="add_usuario"
+                                                        id="addUsuarioButton">
+                                                        Adicionar Usuário
+                                                    </button>
                                                 </form>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="submit" class="btn btn-secondary"
+                                                <button type="button" class="btn btn-secondary"
                                                     data-dismiss="modal">Fechar</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
+
+
 
                     </div>
 
@@ -454,6 +547,40 @@ echo '<script>var veterinarioData = ' . json_encode([
 
     <script>
         $(document).ready(function () {
+            $('.save-btn').click(function () {
+                var veterinarioId = $(this).data('veterinario-id');
+                var row = $(this).closest('tr');
+                var nome = row.find('[data-field="tx_nome"]').text().trim();
+                var genero = row.find('[data-field="tx_genero"]').text().trim();
+
+                // Realizar uma solicitação AJAX para atualizar o veterinário
+                $.ajax({
+                    type: 'POST',
+                    url: 'atualizar_veterinario.php',
+                    data: {
+                        id: veterinarioId,
+                        nome: nome,
+                        genero: genero
+                    },
+                    success: function (response) {
+                        if (response === 'success') {
+                            // Atualização bem-sucedida
+                            console.log('Veterinário atualizado com sucesso.');
+                        } else {
+                            // Atualização falhou
+                            console.error('Falha na atualização do veterinário.');
+                        }
+                    },
+                    error: function () {
+                        console.error('Erro na solicitação AJAX.');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
             // Adicione um evento de clique aos botões "Excluir"
             $('.delete-btn').click(function () {
                 const usuario_id = $(this).data('usuario-id');
@@ -486,40 +613,37 @@ echo '<script>var veterinarioData = ' . json_encode([
     </script>
 
     <script>
-        $(document).ready(function () {
-            $('.save-btn').click(function () {
-                var usuarioId = $(this).data('usuario-id');
-                var row = $(this).closest('tr');
-                var nomeUsuario = row.find('[data-field="tx_usuario"]').text().trim();
-                var senha = row.find('[data-field="tx_senha"]').text().trim();
-                var vetId = row.find('[data-field="vet_id"]').val().trim();
+        function verificarSenhaMaster() {
+            // Substitua 'suaSenhaMaster' pela senha master real
+            var senhaMasterDigitada = document.getElementById("senhaMaster").value;
+            var senhaMasterCorreta = "sisvet";
 
-                // Realizar uma solicitação AJAX para atualizar o usuário
-                $.ajax({
-                    type: 'POST',
-                    url: 'atualizar_usuario.php',
-                    data: {
-                        id: usuarioId,
-                        nomeUsuario: nomeUsuario,
-                        senha: senha,
-                        vetId: vetId
-                    },
-                    success: function (response) {
-                        if (response === 'success') {
-                            // Atualização bem-sucedida
-                            console.log('Usuário atualizado com sucesso.');
-                        } else {
-                            // Atualização falhou
-                            console.error('Falha na atualização do usuário.');
-                        }
-                    },
-                    error: function () {
-                        console.error('Erro na solicitação AJAX.');
-                    }
-                });
-            });
-        });
+            if (senhaMasterDigitada === senhaMasterCorreta) {
+                // Senha correta, redirecionar para a página de usuários
+                window.location.href = "usuarios.php";
+            } else {
+                // Senha incorreta, limpar campo e exibir mensagem de erro
+                document.getElementById("senhaMaster").value = "";
+                alert("Senha Master incorreta. Tente novamente.");
+            }
+        }
     </script>
+
+    <script>
+        function validarFormulario() {
+            var senha = document.getElementById('tx_senha').value;
+            var confirmarSenha = document.getElementById('tx_confirmar_senha').value;
+
+            if (senha !== confirmarSenha) {
+                alert('As senhas não coincidem. Por favor, verifique.');
+                return false; // Impede o envio do formulário se as senhas não coincidirem
+            }
+
+            return true; // Permite o envio do formulário se as senhas coincidirem
+        }
+    </script>
+
+
     <style>
         .table-responsive {
             overflow-x: hidden;

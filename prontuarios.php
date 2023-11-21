@@ -10,33 +10,28 @@ if (!isset($_SESSION['user_id'])) {
 // Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
-function adicionarTutor($pdo, $nome, $email, $telefone, $endereco)
+function adicionarProntuario($pdo, $obs, $paciente_id)
 {
-    $insert_query = "INSERT INTO tb_tutor (tx_nome, tx_email, nb_telefone, tx_endereco)
-                    VALUES (:nome, :email, :telefone, :endereco)";
+    $insert_query = "INSERT INTO tb_prontuario (tx_obs, paciente_id) VALUES (:obs, :paciente_id)";
     $stmt = $pdo->prepare($insert_query);
     return $stmt->execute([
-        'nome' => $nome,
-        'email' => $email,
-        'telefone' => $telefone,
-        'endereco' => $endereco
+        'obs' => $obs,
+        'paciente_id' => $paciente_id
     ]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add_tutor'])) {
-        $nome = $_POST['tx_nome'] ?? '';
-        $email = $_POST['tx_email'] ?? '';
-        $telefone = $_POST['nb_telefone'] ?? '';
-        $endereco = $_POST['tx_endereco'] ?? '';
+    if (isset($_POST['add_prontuario'])) {
+        $obs = $_POST['tx_obs'] ?? '';
+        $paciente_id = $_POST['paciente_id'] ?? '';
 
-        if (!empty($nome) && !empty($email) && !empty($telefone) && !empty($endereco)) {
-            if (adicionarTutor($pdo, $nome, $email, $telefone, $endereco)) {
-                // Redirecionar de volta para a página de gerenciamento de pacientes após a adição
-                header("Location: tutores.php");
+        if (!empty($obs) && !empty($paciente_id)) {
+            if (adicionarProntuario($pdo, $obs, $paciente_id)) {
+                // Redirecionar de volta para a página de gerenciamento de prontuários após a adição
+                header("Location: prontuarios.php");
                 exit;
             } else {
-                echo "Falha ao adicionar tutor.";
+                echo "Falha ao adicionar prontuário.";
             }
         } else {
             echo "Por favor, preencha todos os campos obrigatórios.";
@@ -44,18 +39,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Consulta para recuperar informações de tutores
-$tutores_query = "SELECT id, tx_nome, tx_email, nb_telefone, tx_endereco FROM tb_tutor";
-$tutores_result = $pdo->query($tutores_query);
+// Consulta para recuperar informações de prontuários
+$prontuarios_query = "SELECT id, tx_obs, paciente_id FROM tb_prontuario";
+$prontuarios_result = $pdo->query($prontuarios_query);
 
-// Inserir os dados dos tutores no HTML como um objeto JavaScript
-$tutores_data = [];
+// Inserir os dados dos prontuários no HTML como um objeto JavaScript
+$prontuarios_data = [];
 
-while ($row = $tutores_result->fetch(PDO::FETCH_ASSOC)) {
-    $tutores_data[] = $row;
+while ($row = $prontuarios_result->fetch(PDO::FETCH_ASSOC)) {
+    $prontuarios_data[] = $row;
 }
 
-// Consulta para recuperar informações do veterinário
+$pacientes_query = "SELECT p.id, p.tx_nome, p.tx_animal, p.tx_raca, p.tutor_id, p.vet_id, t.tx_nome as tx_tutor, v.tx_nome as tx_veterinario
+    FROM tb_paciente p
+    LEFT JOIN tb_tutor t ON p.tutor_id = t.id
+    LEFT JOIN tb_vet v ON p.vet_id = v.id";
+$pacientes_result = $pdo->query($pacientes_query);
+$pacientes_data = [];
+
+while ($row = $pacientes_result->fetch(PDO::FETCH_ASSOC)) {
+    $pacientes_data[] = $row;
+}
+
 $usuario_id = $_SESSION['user_id'];
 $vet_query = "SELECT tb_vet.tx_nome, tb_vet.tx_genero FROM tb_vet
     JOIN tb_usuario ON tb_vet.id = tb_usuario.vet_id
@@ -72,13 +77,13 @@ if ($vet['tx_genero'] === 'Masculino') {
     $prefixo = '';
 }
 
-// Inserir os dados do veterinário no HTML como um objeto JavaScript
-echo '<script>var tutoresData = ' . json_encode($tutores_data) . ';</script>';
+echo '<script>var prontuariosData = ' . json_encode($prontuarios_data) . ';</script>';
 echo '<script>var veterinarioData = ' . json_encode([
     'prefixo' => $prefixo,
     'nome' => $vet['tx_nome']
 ]) . ';</script>';
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -90,7 +95,7 @@ echo '<script>var veterinarioData = ' . json_encode([
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>VetCare - Tutores</title>
+    <title>VetCare - Prontuários</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -254,14 +259,6 @@ echo '<script>var veterinarioData = ' . json_encode([
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Perfil
                                 </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -288,99 +285,99 @@ echo '<script>var veterinarioData = ' . json_encode([
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Nome</th>
-                                            <th>E-mail</th>
-                                            <th>Telefone</th>
-                                            <th>Endereço</th>
+                                            <th>Paciente</th>
+                                            <th>Observações</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($tutores_data as $tutor): ?>
+                                        <?php foreach ($prontuarios_data as $prontuario): ?>
+                                            <?php
+                                            $paciente_id = $prontuario['paciente_id'];
+                                            $paciente_query = "SELECT tx_nome FROM tb_paciente WHERE id = :paciente_id";
+                                            $stmt = $pdo->prepare($paciente_query);
+                                            $stmt->execute(['paciente_id' => $paciente_id]);
+                                            $paciente = $stmt->fetch(PDO::FETCH_ASSOC);
+                                            ?>
                                             <tr>
-
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_nome">
-                                                    <?php echo $tutor['tx_nome']; ?>
+                                                <td contenteditable="true" class="editable-cell" data-field="paciente_id">
+                                                    <?php echo $paciente['tx_nome']; ?>
                                                 </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_email">
-                                                    <?php echo $tutor['tx_email']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="nb_telefone">
-                                                    <?php echo $tutor['nb_telefone']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_endereco">
-                                                    <?php echo $tutor['tx_endereco']; ?>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_obs">
+                                                    <?php echo $prontuario['tx_obs']; ?>
                                                 </td>
                                                 <td>
                                                     <button type="submit" class="btn btn-primary save-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                        data-prontuario-id="<?php echo $prontuario['id']; ?>">
                                                         Salvar
                                                     </button>
                                                     <button class="btn btn-danger delete-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
+                                                        data-prontuario-id="<?php echo $prontuario['id']; ?>">
                                                         Excluir
                                                     </button>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
-
                                 </table>
+
 
                                 <!-- Botão para abrir o modal -->
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#modalAddTutor">
-                                    Adicionar Tutor
+                                    data-target="#modalAddProntuario">
+                                    Novo Prontuário
                                 </button>
                                 <!-- Modal para adicionar tutor -->
-                                <div class="modal fade" id="modalAddTutor" tabindex="-1" role="dialog"
-                                    aria-labelledby="modalAddTutorLabel" aria-hidden="true">
+                                <div class="modal fade" id="modalAddProntuario" tabindex="-1" role="dialog"
+                                    aria-labelledby="modalAddProntuarioLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="modalAddTutorLabel">Adicionar Tutor</h5>
+                                                <h5 class="modal-title" id="modalAddProntuarioLabel">Novo Prontuário
+                                                </h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <form method="post" id="addTutorForm">
+                                                <form method="post" id="addProntuarioForm">
                                                     <div class="form-group">
-                                                        <label for="nome">Nome:</label>
-                                                        <input type="text" name="tx_nome" id="tx_nome"
-                                                            class="form-control" required>
+                                                        <label for="obs">Observações:</label>
+                                                        <textarea name="tx_obs" id="tx_obs" class="form-control"
+                                                            rows="4" required></textarea>
                                                     </div>
 
                                                     <div class="form-group">
-                                                        <label for="email">E-mail:</label>
-                                                        <input type="email" name="tx_email" id="tx_email"
-                                                            class="form-control" required>
+                                                        <label for="paciente_id">Paciente:</label>
+                                                        <select name="paciente_id" id="paciente_id" class="form-control"
+                                                            required>
+                                                            <!-- Opção padrão vazia para indicar que o usuário deve selecionar -->
+                                                            <option value="" disabled selected>Selecione um paciente
+                                                            </option>
+
+                                                            <!-- Loop através dos pacientes para gerar as opções do select -->
+                                                            <?php foreach ($pacientes_data as $paciente): ?>
+                                                                <option value="<?php echo $paciente['id']; ?>">
+                                                                    <?php echo $paciente['tx_nome']; ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
                                                     </div>
 
-                                                    <div class="form-group">
-                                                        <label for="telefone">Telefone:</label>
-                                                        <input type="tel" name="nb_telefone" id="nb_telefone"
-                                                            class="form-control" required>
-                                                    </div>
 
-                                                    <div class="form-group">
-                                                        <label for="endereco">Endereço:</label>
-                                                        <input type="text" name="tx_endereco" id="tx_endereco"
-                                                            class="form-control" required>
-                                                    </div>
-
-                                                    <button type="submit" class="btn btn-primary" name="add_tutor"
-                                                        id="addTutorButton">Adicionar Tutor</button>
+                                                    <button type="submit" class="btn btn-primary" name="add_prontuario"
+                                                        id="addProntuarioButton">Salvar Prontuário</button>
                                                 </form>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="submit" class="btn btn-secondary"
+                                                <button type="button" class="btn btn-secondary"
                                                     data-dismiss="modal">Fechar</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
 
                             </div>
                         </div>
