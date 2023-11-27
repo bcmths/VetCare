@@ -362,12 +362,21 @@ echo '<script>var veterinarioData = ' . json_encode([
                                         <?php foreach ($sinais_data as $sinais): ?>
                                         <tr>
                                             <td class="paciente-select" data-field="paciente_id">
+
                                                 <select>
-                                                    <option value="<?php echo $paciente['id']; ?>"
-                                                        <?php if ($paciente['id'] == $sinais['paciente_id']) echo "selected"; ?>>
-                                                        <?php echo $paciente['tx_nome']; ?>
-                                                    </option>
-                                                    <?php endforeach; ?>
+                                                    <?php
+
+                                                        $paciente_id = $sinais['paciente_id'];
+                                                       
+
+                                                        $consulta_paciente = "SELECT id, tx_nome FROM tb_paciente";
+                                                        $stmt_paciente = $pdo->prepare($consulta_paciente);
+                                                        $stmt_paciente->execute();
+                                                        while ($paciente = $stmt_paciente->fetch(PDO::FETCH_ASSOC)) {
+                                                            $selected = ($paciente['id'] == $paciente_id) ? 'selected' : '';
+                                                            echo '<option value="' . $paciente['id'] . '" ' . $selected . '>' . $paciente['tx_nome'] . '</option>';
+                                                        }
+                                                        ?>
                                                 </select>
                                             </td>
 
@@ -386,6 +395,7 @@ echo '<script>var veterinarioData = ' . json_encode([
                                                 </button>
                                             </td>
                                         </tr>
+                                        <?php endforeach; ?>
                                     </tbody>
 
                                 </table>
