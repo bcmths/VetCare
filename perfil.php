@@ -315,31 +315,25 @@ echo '<script>var usuarioData = ' . json_encode([
                                 <div class="form-group">
                                     <label for="tx_usuario"><strong>Usuário:</strong></label>
                                     <div class="d-inline-block" style="margin-right: 10px;"
-                                        <?php echo ($usuario['id'] != $_SESSION['user_id']) ? 'contenteditable="false"' : 'contenteditable="true"'; ?>>
+                                        <?php echo ($usuario['id'] != $_SESSION['user_id'])  ?>>
                                         <?php echo $usuario['tx_usuario']; ?>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="tx_senha"><strong>Senha:</strong></label>
                                     <div class="d-inline-block" style="margin-right: 10px;"
-                                        <?php echo ($usuario['id'] != $_SESSION['user_id']) ? 'contenteditable="false"' : 'contenteditable="true"'; ?>>
+                                        <?php echo ($usuario['id'] != $_SESSION['user_id']) ?>>
                                         <?php echo $usuario['tx_senha']; ?>
                                     </div>
                                 </div>
                                 <div class="form-group" style="margin-top: 10px;">
                                     <?php if ($usuario['id'] == $_SESSION['user_id']): ?>
-                                    <button type="submit" class="btn btn-primary save-btn"
-                                        data-usuario-id="<?php echo $usuario['id']; ?>">
-                                        Salvar
-                                    </button>
                                     <?php endif; ?>
                                 </div>
                             </form>
                             <?php endif; ?>
                             <?php endforeach; ?>
                         </div>
-
-
                     </div>
 
                 </div>

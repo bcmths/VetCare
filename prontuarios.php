@@ -307,11 +307,11 @@ echo '<script>var veterinarioData = ' . json_encode([
                                                     <?php echo $prontuario['tx_obs']; ?>
                                                 </td>
                                                 <td>
-                                                    <button type="submit" class="btn btn-primary save-btn"
+                                                    <button type="button" class="btn btn-primary save-btn"
                                                         data-prontuario-id="<?php echo $prontuario['id']; ?>">
                                                         Salvar
                                                     </button>
-                                                    <button class="btn btn-danger delete-btn"
+                                                    <button type="button" class="btn btn-danger delete-btn"
                                                         data-prontuario-id="<?php echo $prontuario['id']; ?>">
                                                         Excluir
                                                     </button>
@@ -451,29 +451,22 @@ echo '<script>var veterinarioData = ' . json_encode([
 
     <script>
         $(document).ready(function () {
-            // Adicione um evento de clique aos botões "Excluir"
             $('.delete-btn').click(function () {
-                const usuario_id = $(this).data('usuario-id');
+                const prontuario_id = $(this).data('prontuario-id');
 
-                // Confirmar com o usuário antes de excluir
-                if (confirm('Tem certeza de que deseja excluir este usuário?')) {
-                    // Realizar uma solicitação AJAX para excluir o usuário
+                if (confirm('Tem certeza de que deseja excluir este prontuário?')) {
                     $.ajax({
                         type: 'POST',
-                        url: 'excluir_usuario.php', // Crie um arquivo para a exclusão dos usuários
+                        url: 'excluir_prontuario.php',
                         data: {
-                            id: usuario_id
+                            id: prontuario_id
                         },
                         success: function (data) {
-                            // Verificar a resposta do servidor
                             if (data === 'success') {
-                                // Exclusão bem-sucedida
-                                console.log('Usuário excluído com sucesso.');
-                                // Recarregue a página ou atualize a tabela para refletir a exclusão
+                                console.log('Prontuário excluído com sucesso.');
                                 location.reload();
                             } else {
-                                // Exibir uma mensagem de erro se a exclusão falhar
-                                console.error('Falha ao excluir usuário.');
+                                console.error('Falha ao excluir prontuário.');
                             }
                         }
                     });
@@ -485,29 +478,24 @@ echo '<script>var veterinarioData = ' . json_encode([
     <script>
         $(document).ready(function () {
             $('.save-btn').click(function () {
-                var usuarioId = $(this).data('usuario-id');
+                var prontuarioId = $(this).data('prontuario-id');
                 var row = $(this).closest('tr');
-                var nomeUsuario = row.find('[data-field="tx_usuario"]').text().trim();
-                var senha = row.find('[data-field="tx_senha"]').text().trim();
-                var vetId = row.find('[data-field="vet_id"]').val().trim();
+                var obsProntuario = row.find('[data-field="tx_obs"]').text().trim();
+                var pacienteId = row.find('[data-field="paciente_id"]').val().trim();
 
-                // Realizar uma solicitação AJAX para atualizar o usuário
                 $.ajax({
                     type: 'POST',
-                    url: 'atualizar_usuario.php',
+                    url: 'atualizar_prontuario.php',
                     data: {
-                        id: usuarioId,
-                        nomeUsuario: nomeUsuario,
-                        senha: senha,
-                        vetId: vetId
+                        id: prontuarioId,
+                        obs: obsProntuario,
+                        paciente_id: pacienteId
                     },
                     success: function (response) {
                         if (response === 'success') {
-                            // Atualização bem-sucedida
-                            console.log('Usuário atualizado com sucesso.');
+                            console.log('Prontuário atualizado com sucesso.');
                         } else {
-                            // Atualização falhou
-                            console.error('Falha na atualização do usuário.');
+                            console.error('Falha na atualização do prontuário.');
                         }
                     },
                     error: function () {
@@ -517,6 +505,7 @@ echo '<script>var veterinarioData = ' . json_encode([
             });
         });
     </script>
+
     <style>
         .table-responsive {
             overflow-x: hidden;
