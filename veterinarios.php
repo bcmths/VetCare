@@ -68,7 +68,7 @@ echo '<script>var veterinarioData = ' . json_encode([
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 
 <head>
     <meta charset="utf-8" />
@@ -77,7 +77,7 @@ echo '<script>var veterinarioData = ' . json_encode([
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>VetCare - Veterinários</title>
+    <title>VetCare - Pacientes</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -146,7 +146,7 @@ echo '<script>var veterinarioData = ' . json_encode([
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="prontuarios.php">
+                <a class="nav-link" href="">
                     <i class="fa fa-file-medical"></i>
                     <span>Prontuários</span></a>
             </li>
@@ -222,23 +222,6 @@ echo '<script>var veterinarioData = ' . json_encode([
                     </div>
                 </div>
             </div>
-
-
-
-            <!-- 
-<script>
-$(document).ready(function() {
-    // Adicionar evento de clique ao link de navegação "Usuários"
-    $('a.usuarios-link').on('click', function(e) {
-        e.preventDefault();
-        // Exibir o modal
-        $('#senhaMasterModal').modal('show');
-    });
-});
-</script> -->
-
-
-
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block" />
@@ -320,18 +303,11 @@ $(document).ready(function() {
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="perfil.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    Perfil
                                 </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
+
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -499,6 +475,9 @@ $(document).ready(function() {
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

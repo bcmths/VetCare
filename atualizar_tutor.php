@@ -1,16 +1,16 @@
 <?php
-// Inclua o arquivo de conexão com o banco de dados
+
 require_once 'conexao.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtenha os dados do formulário
-    $tutor_id = $_POST['id']; // Usando o campo "id" para o ID do tutor
+
+    $tutor_id = $_POST['id'];
     $nome = $_POST['nome'];
     $email = $_POST['email'];
     $telefone = $_POST['telefone'];
     $endereco = $_POST['endereco'];
 
-    // Atualize os dados do tutor no banco de dados
+
     $update_query = "UPDATE tb_tutor
                     SET tx_nome = :nome, tx_email = :email, nb_telefone = :telefone, tx_endereco = :endereco
                     WHERE id = :id";
@@ -23,18 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'telefone' => $telefone,
             'endereco' => $endereco,
             'id' => $tutor_id,
-            // Corrigir aqui, usar 'tutor_id' em vez de 'id'
         ])
     ) {
-        // Atualização bem-sucedida
         echo 'success';
     } else {
-        // Falha na atualização
+
         echo 'error';
     }
 } else {
-    // Responda a outros tipos de solicitações, se necessário
-    http_response_code(405); // Método não permitido
+    http_response_code(405);
     echo 'Method Not Allowed';
 }
 

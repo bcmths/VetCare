@@ -66,7 +66,7 @@ echo '</script>';
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 
 <head>
     <meta charset="utf-8" />
@@ -75,12 +75,13 @@ echo '</script>';
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>Vet Care - Dashboard</title>
+    <title>VetCare - Pacientes</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
-    <link href="https:
-        rel=" stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet" />
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet" />
@@ -143,17 +144,82 @@ echo '</script>';
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="prontuarios.php">
+                <a class="nav-link" href="">
                     <i class="fa fa-file-medical"></i>
                     <span>Prontuários</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="usuarios.php">
+                <a class="nav-link usuarios-link" href="#" onclick="#modalSenhaMaster">
                     <i class="fa fa-users"></i>
                     <span>Usuários</span>
                 </a>
+
             </li>
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+            <script>
+            $(document).ready(function() {
+                $(".usuarios-link").click(function() {
+                    $("#modalSenhaMaster").modal("show");
+                });
+            });
+            </script>
+
+            <script>
+            function verificarSenhaMaster() {
+
+                // Exibe o modal
+                $("#modalSenhaMaster").modal("show");
+
+                // Obtém a senha master digitada
+                var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
+
+                // Faz a solicitação AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: 'verificar_senha_master.php',
+                    data: {
+                        verificar_senha_master: true,
+                        senha_master: senhaMasterDigitada
+                    },
+                    success: function(data) {
+                        if (data === 'success') {
+                            // Senha master verificada com sucesso, redirecionar para a página de usuários
+                            window.location.href = 'usuarios.php';
+                        } else {
+                            // Senha master incorreta, exibir uma mensagem de erro
+                            alert("Senha Master incorreta. Tente novamente.");
+                        }
+                    },
+                    error: function() {
+                        console.error('Erro na solicitação AJAX.');
+                    }
+                });
+            }
+            </script>
+
+            <div class="modal fade" id="modalSenhaMaster" tabindex="-1" role="dialog"
+                aria-labelledby="modalSenhaMasterLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalSenhaMasterLabel">Digite a senha master</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="password" id="senhaMasterInput" class="form-control"
+                                placeholder="Senha master">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary"
+                                onclick="verificarSenhaMaster()">Acessar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block" />
@@ -163,6 +229,7 @@ echo '</script>';
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
         </ul>
+        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -179,23 +246,24 @@ echo '</script>';
                     <div id="dateDisplay"></div>
 
                     <script>
-                        function updateDate() {
-                            const dateElement = document.getElementById('dateDisplay');
-                            const currentDate = new Date();
-                            const options = {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            };
-                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                                options);
+                    function updateDate() {
+                        const dateElement = document.getElementById('dateDisplay');
+                        const currentDate = new Date();
+                        const options = {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        };
+                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                            options); // Altere 'pt-BR' para o código de idioma desejado
 
-                            dateElement.textContent = `Hoje é ${formattedDate}.`;
-                        }
+                        dateElement.textContent = `Hoje é ${formattedDate}.`;
+                    }
 
-                        updateDate();
-                        setInterval(updateDate, 1000);
+                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
+                    updateDate(); // Chama a função para exibir a data inicial
+                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -241,7 +309,7 @@ echo '</script>';
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
+                                    Sair
                                 </a>
                             </div>
                         </li>
@@ -343,43 +411,43 @@ echo '</script>';
                             </div>
                         </div>
                         <style>
-                            .chart-pie {
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                            }
+                        .chart-pie {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
 
-                            #myPieChart {
-                                margin: 0 auto;
-                            }
+                        #myPieChart {
+                            margin: 0 auto;
+                        }
                         </style>
 
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                         <script>
-                            var pacientesData = <?php echo json_encode($pacientes_data); ?>;
+                        var pacientesData = <?php echo json_encode($pacientes_data); ?>;
 
-                            var ctx = document.getElementById('myPieChart').getContext('2d');
-                            var myPieChart = new Chart(ctx, {
-                                type: 'pie',
-                                data: {
-                                    labels: Object.keys(pacientesData),
-                                    datasets: [{
-                                        data: Object.values(pacientesData),
-                                        backgroundColor: [
-                                            '#4e73df',
-                                            '#1cc88a',
-                                            '#36b9cc',
-                                            '#d4e765',
-                                            '#f6c23e',
-                                            '#e74a3b',
-                                            '#4e9a5e',
-                                            '#9b59b6',
-                                            '#3498db',
-                                            '#e67e22',
-                                        ],
-                                    }],
-                                },
-                            });
+                        var ctx = document.getElementById('myPieChart').getContext('2d');
+                        var myPieChart = new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: Object.keys(pacientesData),
+                                datasets: [{
+                                    data: Object.values(pacientesData),
+                                    backgroundColor: [
+                                        '#4e73df',
+                                        '#1cc88a',
+                                        '#36b9cc',
+                                        '#d4e765',
+                                        '#f6c23e',
+                                        '#e74a3b',
+                                        '#4e9a5e',
+                                        '#9b59b6',
+                                        '#3498db',
+                                        '#e67e22',
+                                    ],
+                                }],
+                            },
+                        });
                         </script>
                     </div>
 
@@ -434,6 +502,9 @@ echo '</script>';
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

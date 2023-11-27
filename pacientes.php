@@ -177,7 +177,9 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                 </a>
 
             </li>
-            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js">
+
+            </script>
             <script>
             $(document).ready(function() {
                 $(".usuarios-link").click(function() {
@@ -322,18 +324,11 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="perfil.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    Perfil
                                 </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
+
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -492,11 +487,6 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
-
                             </div>
                         </div>
                     </div>

@@ -10,39 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 // Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
-function adicionarUsuario($pdo, $nome, $senha, $vet_id)
-{
-    $insert_query = "INSERT INTO tb_usuario (tx_nome, tx_senha, vet_id)
-                    VALUES (:nome, :senha, :vet_id)";
-    $stmt = $pdo->prepare($insert_query);
-    return $stmt->execute([
-        'nome' => $nome,
-        'senha' => $senha,
-        'vet_id' => $vet_id
-    ]);
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add_usuario'])) {
-        $nome = $_POST['tx_nome'] ?? '';
-        $senha = $_POST['tx_senha'] ?? '';
-        $vet_id = $_POST['vet_id'] ?? '';
-
-        if (!empty($nome) && !empty($senha) && !empty($vet_id)) {
-            if (adicionarUsuario($pdo, $nome, $senha, $vet_id)) {
-                // Redirecionar de volta para a página de gerenciamento de usuários após a adição
-                header("Location: usuarios.php");
-                exit;
-            } else {
-                echo "Falha ao adicionar usuário.";
-            }
-        } else {
-            echo "Por favor, preencha todos os campos obrigatórios.";
-        }
-    }
-}
-
-// Consulta para recuperar informações de usuários
 // Obtendo dados dos veterinários
 $veterinarios_query = "SELECT id, tx_nome FROM tb_vet";
 $veterinarios_result = $pdo->query($veterinarios_query);
@@ -167,38 +134,78 @@ echo '<script>var usuarioData = ' . json_encode([
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#senhaMasterModal">
+                <a class="nav-link usuarios-link" href="#" onclick="#modalSenhaMaster">
                     <i class="fa fa-users"></i>
                     <span>Usuários</span>
                 </a>
-            </li>
 
-            <!-- Modal para a senha master -->
-            <div class="modal fade" id="senhaMasterModal" tabindex="-1" role="dialog"
-                aria-labelledby="senhaMasterModalLabel" aria-hidden="true">
+            </li>
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js">
+
+            </script>
+            <script>
+            $(document).ready(function() {
+                $(".usuarios-link").click(function() {
+                    $("#modalSenhaMaster").modal("show");
+                });
+            });
+            </script>
+
+            <script>
+            function verificarSenhaMaster() {
+
+                // Exibe o modal
+                $("#modalSenhaMaster").modal("show");
+
+                // Obtém a senha master digitada
+                var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
+
+                // Faz a solicitação AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: 'verificar_senha_master.php',
+                    data: {
+                        verificar_senha_master: true,
+                        senha_master: senhaMasterDigitada
+                    },
+                    success: function(data) {
+                        if (data === 'success') {
+                            // Senha master verificada com sucesso, redirecionar para a página de usuários
+                            window.location.href = 'usuarios.php';
+                        } else {
+                            // Senha master incorreta, exibir uma mensagem de erro
+                            alert("Senha Master incorreta. Tente novamente.");
+                        }
+                    },
+                    error: function() {
+                        console.error('Erro na solicitação AJAX.');
+                    }
+                });
+            }
+            </script>
+
+            <div class="modal fade" id="modalSenhaMaster" tabindex="-1" role="dialog"
+                aria-labelledby="modalSenhaMasterLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="senhaMasterModalLabel">Digite a Senha Master</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <h5 class="modal-title" id="modalSenhaMasterLabel">Digite a senha master</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form id="senhaMasterForm">
-                                <div class="form-group">
-                                    <label for="senhaMaster">Senha Master:</label>
-                                    <input type="password" class="form-control" id="senhaMaster" required>
-                                </div>
-                                <button type="button" class="btn btn-primary"
-                                    onclick="verificarSenhaMaster()">Confirmar</button>
-                            </form>
+                            <input type="password" id="senhaMasterInput" class="form-control"
+                                placeholder="Senha master">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary"
+                                onclick="verificarSenhaMaster()">Acessar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
                 </div>
             </div>
-
-
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block" />
@@ -400,58 +407,6 @@ echo '<script>var usuarioData = ' . json_encode([
 
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
-
-    <script>
-    $(document).ready(function() {
-        $('.save-btn').click(function() {
-            var veterinarioId = $(this).data('veterinario-id');
-            var row = $(this).closest('tr');
-            var nome = row.find('[data-field="tx_nome"]').text().trim();
-            var genero = row.find('[data-field="tx_genero"]').text().trim();
-
-            // Realizar uma solicitação AJAX para atualizar o veterinário
-            $.ajax({
-                type: 'POST',
-                url: 'atualizar_veterinario.php',
-                data: {
-                    id: veterinarioId,
-                    nome: nome,
-                    genero: genero
-                },
-                success: function(response) {
-                    if (response === 'success') {
-                        // Atualização bem-sucedida
-                        console.log('Veterinário atualizado com sucesso.');
-                    } else {
-                        // Atualização falhou
-                        console.error('Falha na atualização do veterinário.');
-                    }
-                },
-                error: function() {
-                    console.error('Erro na solicitação AJAX.');
-                }
-            });
-        });
-    });
-    </script>
-
-    <script>
-    function verificarSenhaMaster() {
-        // Substitua 'suaSenhaMaster' pela senha master real
-        var senhaMasterDigitada = document.getElementById("senhaMaster").value;
-        var senhaMasterCorreta = "sisvet";
-
-        if (senhaMasterDigitada === senhaMasterCorreta) {
-            // Senha correta, redirecionar para a página de usuários
-            window.location.href = "usuarios.php";
-        } else {
-            // Senha incorreta, limpar campo e exibir mensagem de erro
-            document.getElementById("senhaMaster").value = "";
-            alert("Senha Master incorreta. Tente novamente.");
-        }
-    }
-    </script>
-
 
     <style>
     .table-responsive {

@@ -4,20 +4,20 @@ require_once 'conexao.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $veterinario_id = $_POST['id'];
-    $nome = $_POST['nome'];
-    $genero = $_POST['genero'];
+    $sinaisId = $_POST['id'];
+    $descricao = $_POST['descricao'];
+    $pacienteId = $_POST['paciente_id'];
 
-    $update_query = "UPDATE tb_vet
-                    SET tx_nome = :nome, tx_genero = :genero
+    $update_query = "UPDATE tb_sinaisclinicos
+                    SET tx_descricao = :descricao, paciente_id = :paciente_id
                     WHERE id = :id";
     $stmt = $pdo->prepare($update_query);
 
     if (
         $stmt->execute([
-            'nome' => $nome,
-            'genero' => $genero,
-            'id' => $veterinario_id,
+            'descricao' => $descricao,
+            'paciente_id' => $pacienteId,
+            'id' => $sinaisId,
         ])
     ) {
 
