@@ -159,7 +159,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="sinais/sinaisclinicos.php">
+                <a class="nav-link" href="sinais.php">
                     <i class="fa fa-list"></i>
                     <span>Sinais Clínicos</span></a>
             </li>

@@ -10,33 +10,29 @@ if (!isset($_SESSION['user_id'])) {
 // Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
-function adicionarTutor($pdo, $nome, $email, $telefone, $endereco)
+function adicionarSinaisClinicos($pdo, $descricao, $paciente_id)
 {
-    $insert_query = "INSERT INTO tb_tutor (tx_nome, tx_email, nb_telefone, tx_endereco)
-                    VALUES (:nome, :email, :telefone, :endereco)";
+    $insert_query = "INSERT INTO tb_sinaisclinicos (tx_descricao, paciente_id)
+                    VALUES (:descricao, :paciente_id)";
     $stmt = $pdo->prepare($insert_query);
     return $stmt->execute([
-        'nome' => $nome,
-        'email' => $email,
-        'telefone' => $telefone,
-        'endereco' => $endereco
+        'descricao' => $descricao,
+        'paciente_id' => $paciente_id
     ]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add_tutor'])) {
-        $nome = $_POST['tx_nome'] ?? '';
-        $email = $_POST['tx_email'] ?? '';
-        $telefone = $_POST['nb_telefone'] ?? '';
-        $endereco = $_POST['tx_endereco'] ?? '';
+    if (isset($_POST['add_sinaisclinicos'])) {
+        $descricao = $_POST['tx_descricao'] ?? '';
+        $paciente_id = $_POST['paciente_id'] ?? '';
 
-        if (!empty($nome) && !empty($email) && !empty($telefone) && !empty($endereco)) {
-            if (adicionarTutor($pdo, $nome, $email, $telefone, $endereco)) {
-                // Redirecionar de volta para a página de gerenciamento de pacientes após a adição
-                header("Location: tutores.php");
+        if (!empty($descricao) && !empty($paciente_id)) {
+            if (adicionarSinaisClinicos($pdo, $descricao, $paciente_id)) {
+                // Redirecionar de volta para a página de gerenciamento de sinais clínicos após a adição
+                header("Location: sinaisclinicos.php");
                 exit;
             } else {
-                echo "Falha ao adicionar tutor.";
+                echo "Falha ao adicionar sinais clínicos.";
             }
         } else {
             echo "Por favor, preencha todos os campos obrigatórios.";
@@ -45,14 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Consulta para recuperar informações de tutores
-$tutores_query = "SELECT id, tx_nome, tx_email, nb_telefone, tx_endereco FROM tb_tutor";
-$tutores_result = $pdo->query($tutores_query);
+$sinais_query = "SELECT id, tx_descricao, paciente_id FROM tb_sinaisclinicos";
+$sinais_result = $pdo->query($sinais_query);
 
 // Inserir os dados dos tutores no HTML como um objeto JavaScript
-$tutores_data = [];
+$sinais_data = [];
 
-while ($row = $tutores_result->fetch(PDO::FETCH_ASSOC)) {
-    $tutores_data[] = $row;
+while ($row = $sinais_result->fetch(PDO::FETCH_ASSOC)) {
+    $sinais_data[] = $row;
 }
 
 // Consulta para recuperar informações do veterinário
@@ -73,7 +69,7 @@ if ($vet['tx_genero'] === 'Masculino') {
 }
 
 // Inserir os dados do veterinário no HTML como um objeto JavaScript
-echo '<script>var tutoresData = ' . json_encode($tutores_data) . ';</script>';
+echo '<script>var sinaisData = ' . json_encode($sinais_data) . ';</script>';
 echo '<script>var veterinarioData = ' . json_encode([
     'prefixo' => $prefixo,
     'nome' => $vet['tx_nome']
@@ -90,7 +86,7 @@ echo '<script>var veterinarioData = ' . json_encode([
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>VetCare - Tutores</title>
+    <title>VetCare - Sinais Clínicos</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -195,24 +191,24 @@ echo '<script>var veterinarioData = ' . json_encode([
                     <div id="dateDisplay"></div>
 
                     <script>
-                        function updateDate() {
-                            const dateElement = document.getElementById('dateDisplay');
-                            const currentDate = new Date();
-                            const options = {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            };
-                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                                options); // Altere 'pt-BR' para o código de idioma desejado
+                    function updateDate() {
+                        const dateElement = document.getElementById('dateDisplay');
+                        const currentDate = new Date();
+                        const options = {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        };
+                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                            options); // Altere 'pt-BR' para o código de idioma desejado
 
-                            dateElement.textContent = `Hoje é ${formattedDate}.`;
-                        }
+                        dateElement.textContent = `Hoje é ${formattedDate}.`;
+                    }
 
-                        // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                        updateDate(); // Chama a função para exibir a data inicial
-                        setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
+                    updateDate(); // Chama a função para exibir a data inicial
+                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -254,14 +250,7 @@ echo '<script>var veterinarioData = ' . json_encode([
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Perfil
                                 </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
+
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -280,7 +269,7 @@ echo '<script>var veterinarioData = ' . json_encode([
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h3 class="m-0 font-weight-bold text-primary">
-                                Tutores
+                                Sinais Clínicos
                             </h3>
                         </div>
                         <div class="card-body">
@@ -289,39 +278,45 @@ echo '<script>var veterinarioData = ' . json_encode([
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
-                                            <th>E-mail</th>
-                                            <th>Telefone</th>
-                                            <th>Endereço</th>
+                                            <th>Sinais Apresentados</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($tutores_data as $tutor): ?>
-                                            <tr>
+                                        <?php foreach ($sinais_data as $sinais): ?>
+                                        <tr>
 
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_nome">
-                                                    <?php echo $tutor['tx_nome']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_email">
-                                                    <?php echo $tutor['tx_email']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="nb_telefone">
-                                                    <?php echo $tutor['nb_telefone']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_endereco">
-                                                    <?php echo $tutor['tx_endereco']; ?>
-                                                </td>
-                                                <td>
-                                                    <button type="submit" class="btn btn-primary save-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
-                                                        Salvar
-                                                    </button>
-                                                    <button class="btn btn-danger delete-btn"
-                                                        data-tutor-id="<?php echo $tutor['id']; ?>">
-                                                        Excluir
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                            <td contenteditable="true" class="editable-cell" data-field="tx_nome">
+                                                <?php
+                                                    // Substitua $sinais['paciente_id'] pela variável que contém o paciente_id específico
+                                                    $paciente_id = $sinais['paciente_id'];
+
+                                                    // Consulta para obter o nome do paciente usando o paciente_id
+                                                    $consulta_paciente = "SELECT tx_nome FROM tb_paciente WHERE id = :paciente_id";
+                                                    $stmt_paciente = $pdo->prepare($consulta_paciente);
+                                                    $stmt_paciente->execute(['paciente_id' => $paciente_id]);
+                                                    $paciente = $stmt_paciente->fetch();
+
+                                                    // Exibir o nome do paciente
+                                                    echo $paciente['tx_nome'];
+                                                    ?>
+                                            </td>
+
+                                            <td contenteditable="true" class="editable-cell" data-field="tx_descricao">
+                                                <?php echo $sinais['tx_descricao']; ?>
+                                            </td>
+
+                                            <td>
+                                                <button type="submit" class="btn btn-primary save-btn"
+                                                    data-sinais-id="<?php echo $sinais['id']; ?>">
+                                                    Salvar
+                                                </button>
+                                                <button class="btn btn-danger delete-btn"
+                                                    data-sinais-id="<?php echo $sinais['id']; ?>">
+                                                    Excluir
+                                                </button>
+                                            </td>
+                                        </tr>
                                         <?php endforeach; ?>
                                     </tbody>
 
@@ -453,77 +448,77 @@ echo '<script>var veterinarioData = ' . json_encode([
     <script src="js/demo/datatables-demo.js"></script>
 
     <script>
-        $(document).ready(function () {
-            // Adicione um evento de clique aos botões "Excluir"
-            $('.delete-btn').click(function () {
-                const usuario_id = $(this).data('usuario-id');
+    $(document).ready(function() {
+        // Adicione um evento de clique aos botões "Excluir"
+        $('.delete-btn').click(function() {
+            const usuario_id = $(this).data('usuario-id');
 
-                // Confirmar com o usuário antes de excluir
-                if (confirm('Tem certeza de que deseja excluir este usuário?')) {
-                    // Realizar uma solicitação AJAX para excluir o usuário
-                    $.ajax({
-                        type: 'POST',
-                        url: 'excluir_usuario.php', // Crie um arquivo para a exclusão dos usuários
-                        data: {
-                            id: usuario_id
-                        },
-                        success: function (data) {
-                            // Verificar a resposta do servidor
-                            if (data === 'success') {
-                                // Exclusão bem-sucedida
-                                console.log('Usuário excluído com sucesso.');
-                                // Recarregue a página ou atualize a tabela para refletir a exclusão
-                                location.reload();
-                            } else {
-                                // Exibir uma mensagem de erro se a exclusão falhar
-                                console.error('Falha ao excluir usuário.');
-                            }
+            // Confirmar com o usuário antes de excluir
+            if (confirm('Tem certeza de que deseja excluir este usuário?')) {
+                // Realizar uma solicitação AJAX para excluir o usuário
+                $.ajax({
+                    type: 'POST',
+                    url: 'excluir_usuario.php', // Crie um arquivo para a exclusão dos usuários
+                    data: {
+                        id: usuario_id
+                    },
+                    success: function(data) {
+                        // Verificar a resposta do servidor
+                        if (data === 'success') {
+                            // Exclusão bem-sucedida
+                            console.log('Usuário excluído com sucesso.');
+                            // Recarregue a página ou atualize a tabela para refletir a exclusão
+                            location.reload();
+                        } else {
+                            // Exibir uma mensagem de erro se a exclusão falhar
+                            console.error('Falha ao excluir usuário.');
                         }
-                    });
-                }
-            });
+                    }
+                });
+            }
         });
+    });
     </script>
 
     <script>
-        $(document).ready(function () {
-            $('.save-btn').click(function () {
-                var usuarioId = $(this).data('usuario-id');
-                var row = $(this).closest('tr');
-                var nomeUsuario = row.find('[data-field="tx_usuario"]').text().trim();
-                var senha = row.find('[data-field="tx_senha"]').text().trim();
-                var vetId = row.find('[data-field="vet_id"]').val().trim();
+    $(document).ready(function() {
+        $('.save-btn').click(function() {
+            var usuarioId = $(this).data('usuario-id');
+            var row = $(this).closest('tr');
+            var nomeUsuario = row.find('[data-field="tx_usuario"]').text().trim();
+            var senha = row.find('[data-field="tx_senha"]').text().trim();
+            var vetId = row.find('[data-field="vet_id"]').val().trim();
 
-                // Realizar uma solicitação AJAX para atualizar o usuário
-                $.ajax({
-                    type: 'POST',
-                    url: 'atualizar_usuario.php',
-                    data: {
-                        id: usuarioId,
-                        nomeUsuario: nomeUsuario,
-                        senha: senha,
-                        vetId: vetId
-                    },
-                    success: function (response) {
-                        if (response === 'success') {
-                            // Atualização bem-sucedida
-                            console.log('Usuário atualizado com sucesso.');
-                        } else {
-                            // Atualização falhou
-                            console.error('Falha na atualização do usuário.');
-                        }
-                    },
-                    error: function () {
-                        console.error('Erro na solicitação AJAX.');
+            // Realizar uma solicitação AJAX para atualizar o usuário
+            $.ajax({
+                type: 'POST',
+                url: 'atualizar_usuario.php',
+                data: {
+                    id: usuarioId,
+                    nomeUsuario: nomeUsuario,
+                    senha: senha,
+                    vetId: vetId
+                },
+                success: function(response) {
+                    if (response === 'success') {
+                        // Atualização bem-sucedida
+                        console.log('Usuário atualizado com sucesso.');
+                    } else {
+                        // Atualização falhou
+                        console.error('Falha na atualização do usuário.');
                     }
-                });
+                },
+                error: function() {
+                    console.error('Erro na solicitação AJAX.');
+                }
             });
         });
+    });
     </script>
     <style>
-        .table-responsive {
-            overflow-x: hidden;
-        }
+    .table-responsive {
+        overflow-x: hidden;
+    }
     </style>
 
 </body>

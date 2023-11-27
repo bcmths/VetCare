@@ -76,7 +76,7 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>SB Admin 2 - Dashboard</title>
+    <title>Vet Care - Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -139,7 +139,7 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="sinais/sinaisclinicos.php">
+                <a class="nav-link" href="sinais.php">
                     <i class="fa fa-list"></i>
                     <span>Sinais Clínicos</span></a>
             </li>
@@ -182,24 +182,24 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
                     <div id="dateDisplay"></div>
 
                     <script>
-                    function updateDate() {
-                        const dateElement = document.getElementById('dateDisplay');
-                        const currentDate = new Date();
-                        const options = {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        };
-                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                            options); // Altere 'pt-BR' para o código de idioma desejado
+                        function updateDate() {
+                            const dateElement = document.getElementById('dateDisplay');
+                            const currentDate = new Date();
+                            const options = {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            };
+                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                                options); // Altere 'pt-BR' para o código de idioma desejado
 
-                        dateElement.textContent = `Hoje é ${formattedDate}.`;
-                    }
+                            dateElement.textContent = `Hoje é ${formattedDate}.`;
+                        }
 
-                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                    updateDate(); // Chama a função para exibir a data inicial
-                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                        // Atualize a data automaticamente a cada segundo (ou conforme necessário)
+                        updateDate(); // Chama a função para exibir a data inicial
+                        setInterval(updateDate, 1000); // Atualiza a data a cada segundo
                     </script>
 
 
@@ -402,8 +402,8 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
                                 <div class="mt-4 text-center small">
                                     <span class="mr-2">
                                         <?php foreach ($pacientes_data as $veterinario => $total_pacientes) { ?>
-                                        <i class="fas fa-circle text-primary"></i>
-                                        <?php echo $veterinario; ?>
+                                            <i class="fas fa-circle text-primary"></i>
+                                            <?php echo $veterinario; ?>
                                         <?php } ?>
                                     </span>
                                 </div>
@@ -595,27 +595,27 @@ if ($total_patients > 0 && $total_prontuarios > 0) {
     <script src="js/demo/chart-pie-demo.js"></script>
 
     <script>
-    // Dados dos pacientes por veterinário
-    var pacientesData = <?php echo json_encode($pacientes_data); ?>;
+        // Dados dos pacientes por veterinário
+        var pacientesData = <?php echo json_encode($pacientes_data); ?>;
 
-    // Configuração do gráfico de pizza
-    var ctx = document.getElementById("myPieChart");
-    var myPieChart = new Chart(ctx, {
-        type: "pie",
-        data: {
-            labels: Object.keys(pacientesData),
-            datasets: [{
-                data: Object.values(pacientesData),
-                backgroundColor: [
-                    "#4e73df",
-                    "#1cc88a",
-                    "#36b9cc",
-                    "#d4e765",
-                    "#f6c23e"
-                ],
-            }, ],
-        },
-    });
+        // Configuração do gráfico de pizza
+        var ctx = document.getElementById("myPieChart");
+        var myPieChart = new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: Object.keys(pacientesData),
+                datasets: [{
+                    data: Object.values(pacientesData),
+                    backgroundColor: [
+                        "#4e73df",
+                        "#1cc88a",
+                        "#36b9cc",
+                        "#d4e765",
+                        "#f6c23e"
+                    ],
+                },],
+            },
+        });
     </script>
 </body>
 
