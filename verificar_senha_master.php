@@ -3,11 +3,12 @@ session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verificar_senha_master'])) {
     $senhaMasterDigitada = $_POST['senha_master'] ?? '';
-    $senhaMasterCorreta = 'sisvet';
+    $senhaMasterCorreta = '123';
 
     if ($senhaMasterDigitada === $senhaMasterCorreta) {
         // Senha correta, defina a variável de sessão
         $_SESSION['senha_master_verificada'] = true;
+        header('usuarios.php');
         echo 'success';
     } else {
         // Senha incorreta

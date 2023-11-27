@@ -161,10 +161,76 @@ echo '<script>var veterinarioData = ' . json_encode([
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="usuarios.php">
+                <a class="nav-link usuarios-link" href="#" onclick="#modalSenhaMaster">
                     <i class="fa fa-users"></i>
-                    <span>Usuários</span></a>
+                    <span>Usuários</span>
+                </a>
+
             </li>
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+            <script>
+            $(document).ready(function() {
+                $(".usuarios-link").click(function() {
+                    $("#modalSenhaMaster").modal("show");
+                });
+            });
+            </script>
+
+            <script>
+            function verificarSenhaMaster() {
+
+                // Exibe o modal
+                $("#modalSenhaMaster").modal("show");
+
+                // Obtém a senha master digitada
+                var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
+
+                // Faz a solicitação AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: 'verificar_senha_master.php',
+                    data: {
+                        verificar_senha_master: true,
+                        senha_master: senhaMasterDigitada
+                    },
+                    success: function(data) {
+                        if (data === 'success') {
+                            // Senha master verificada com sucesso, redirecionar para a página de usuários
+                            window.location.href = 'usuarios.php';
+                        } else {
+                            // Senha master incorreta, exibir uma mensagem de erro
+                            alert("Senha Master incorreta. Tente novamente.");
+                        }
+                    },
+                    error: function() {
+                        console.error('Erro na solicitação AJAX.');
+                    }
+                });
+            }
+            </script>
+
+            <div class="modal fade" id="modalSenhaMaster" tabindex="-1" role="dialog"
+                aria-labelledby="modalSenhaMasterLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalSenhaMasterLabel">Digite a senha master</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="password" id="senhaMasterInput" class="form-control"
+                                placeholder="Senha master">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary"
+                                onclick="verificarSenhaMaster()">Acessar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block" />

@@ -24,6 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Somente veterinários podem ter acesso ao sistema.";
     }
 
+    $check_username_query = "SELECT COUNT(*) FROM tb_usuario WHERE tx_usuario = :username";
+    $check_stmt = $pdo->prepare($check_username_query);
+    $check_stmt->execute(['username' => $username]);
+    $count = $check_stmt->fetchColumn();
+
+    if ($count > 0) {
+        $errors[] = "Nome de usuário já existe. Escolha outro.";
+    }
+
     if (empty($errors)) {
         // Execute a consulta SQL para adicionar um novo usuário
         $insert_query = "INSERT INTO tb_usuario (tx_usuario, vet_id, tx_senha) VALUES (:username, :vet_id, :password)";

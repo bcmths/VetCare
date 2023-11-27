@@ -163,7 +163,6 @@ echo '</script>';
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
         </ul>
-        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -180,27 +179,24 @@ echo '</script>';
                     <div id="dateDisplay"></div>
 
                     <script>
-                    function updateDate() {
-                        const dateElement = document.getElementById('dateDisplay');
-                        const currentDate = new Date();
-                        const options = {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        };
-                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                            options);
+                        function updateDate() {
+                            const dateElement = document.getElementById('dateDisplay');
+                            const currentDate = new Date();
+                            const options = {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            };
+                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                                options);
 
-                        dateElement.textContent = `Hoje é ${formattedDate}.`;
-                    }
+                            dateElement.textContent = `Hoje é ${formattedDate}.`;
+                        }
 
-
-                    updateDate();
-                    setInterval(updateDate, 1000);
+                        updateDate();
+                        setInterval(updateDate, 1000);
                     </script>
-
-
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -255,14 +251,6 @@ echo '</script>';
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate
-                            Report</a>
-                    </div>
-
                     <!-- Content Row -->
                     <div class="row">
 
@@ -355,43 +343,43 @@ echo '</script>';
                             </div>
                         </div>
                         <style>
-                        .chart-pie {
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                        }
+                            .chart-pie {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                            }
 
-                        #myPieChart {
-                            margin: 0 auto;
-                        }
+                            #myPieChart {
+                                margin: 0 auto;
+                            }
                         </style>
 
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                         <script>
-                        var pacientesData = <?php echo json_encode($pacientes_data); ?>;
+                            var pacientesData = <?php echo json_encode($pacientes_data); ?>;
 
-                        var ctx = document.getElementById('myPieChart').getContext('2d');
-                        var myPieChart = new Chart(ctx, {
-                            type: 'pie',
-                            data: {
-                                labels: Object.keys(pacientesData),
-                                datasets: [{
-                                    data: Object.values(pacientesData),
-                                    backgroundColor: [
-                                        '#4e73df',
-                                        '#1cc88a',
-                                        '#36b9cc',
-                                        '#d4e765',
-                                        '#f6c23e',
-                                        '#e74a3b',
-                                        '#4e9a5e',
-                                        '#9b59b6',
-                                        '#3498db',
-                                        '#e67e22',
-                                    ],
-                                }],
-                            },
-                        });
+                            var ctx = document.getElementById('myPieChart').getContext('2d');
+                            var myPieChart = new Chart(ctx, {
+                                type: 'pie',
+                                data: {
+                                    labels: Object.keys(pacientesData),
+                                    datasets: [{
+                                        data: Object.values(pacientesData),
+                                        backgroundColor: [
+                                            '#4e73df',
+                                            '#1cc88a',
+                                            '#36b9cc',
+                                            '#d4e765',
+                                            '#f6c23e',
+                                            '#e74a3b',
+                                            '#4e9a5e',
+                                            '#9b59b6',
+                                            '#3498db',
+                                            '#e67e22',
+                                        ],
+                                    }],
+                                },
+                            });
                         </script>
                     </div>
 
@@ -447,6 +435,13 @@ echo '</script>';
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
@@ -454,12 +449,11 @@ echo '</script>';
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="vendor/datata bles/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-
+    <script src="js/demo/datatables-demo.js"></script>
 </body>
 
 </html>

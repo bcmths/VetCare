@@ -170,11 +170,76 @@ echo '<script>var veterinarioData = ' . json_encode([
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="usuarios.php">
+                <a class="nav-link usuarios-link" href="#" onclick="#modalSenhaMaster">
                     <i class="fa fa-users"></i>
-                    <span>Usuários</span></a>
-            </li>
+                    <span>Usuários</span>
+                </a>
 
+            </li>
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+            <script>
+            $(document).ready(function() {
+                $(".usuarios-link").click(function() {
+                    $("#modalSenhaMaster").modal("show");
+                });
+            });
+            </script>
+
+            <script>
+            function verificarSenhaMaster() {
+
+                // Exibe o modal
+                $("#modalSenhaMaster").modal("show");
+
+                // Obtém a senha master digitada
+                var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
+
+                // Faz a solicitação AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: 'verificar_senha_master.php',
+                    data: {
+                        verificar_senha_master: true,
+                        senha_master: senhaMasterDigitada
+                    },
+                    success: function(data) {
+                        if (data === 'success') {
+                            // Senha master verificada com sucesso, redirecionar para a página de usuários
+                            window.location.href = 'usuarios.php';
+                        } else {
+                            // Senha master incorreta, exibir uma mensagem de erro
+                            alert("Senha Master incorreta. Tente novamente.");
+                        }
+                    },
+                    error: function() {
+                        console.error('Erro na solicitação AJAX.');
+                    }
+                });
+            }
+            </script>
+
+            <div class="modal fade" id="modalSenhaMaster" tabindex="-1" role="dialog"
+                aria-labelledby="modalSenhaMasterLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalSenhaMasterLabel">Digite a senha master</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="password" id="senhaMasterInput" class="form-control"
+                                placeholder="Senha master">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary"
+                                onclick="verificarSenhaMaster()">Acessar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block" />
 
@@ -200,24 +265,24 @@ echo '<script>var veterinarioData = ' . json_encode([
                     <div id="dateDisplay"></div>
 
                     <script>
-                        function updateDate() {
-                            const dateElement = document.getElementById('dateDisplay');
-                            const currentDate = new Date();
-                            const options = {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            };
-                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                                options); // Altere 'pt-BR' para o código de idioma desejado
+                    function updateDate() {
+                        const dateElement = document.getElementById('dateDisplay');
+                        const currentDate = new Date();
+                        const options = {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        };
+                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                            options); // Altere 'pt-BR' para o código de idioma desejado
 
-                            dateElement.textContent = `Hoje é ${formattedDate}.`;
-                        }
+                        dateElement.textContent = `Hoje é ${formattedDate}.`;
+                    }
 
-                        // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                        updateDate(); // Chama a função para exibir a data inicial
-                        setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
+                    updateDate(); // Chama a função para exibir a data inicial
+                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -292,31 +357,31 @@ echo '<script>var veterinarioData = ' . json_encode([
                                     </thead>
                                     <tbody>
                                         <?php foreach ($prontuarios_data as $prontuario): ?>
-                                            <?php
+                                        <?php
                                             $paciente_id = $prontuario['paciente_id'];
                                             $paciente_query = "SELECT tx_nome FROM tb_paciente WHERE id = :paciente_id";
                                             $stmt = $pdo->prepare($paciente_query);
                                             $stmt->execute(['paciente_id' => $paciente_id]);
                                             $paciente = $stmt->fetch(PDO::FETCH_ASSOC);
                                             ?>
-                                            <tr>
-                                                <td contenteditable="true" class="editable-cell" data-field="paciente_id">
-                                                    <?php echo $paciente['tx_nome']; ?>
-                                                </td>
-                                                <td contenteditable="true" class="editable-cell" data-field="tx_obs">
-                                                    <?php echo $prontuario['tx_obs']; ?>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-primary save-btn"
-                                                        data-prontuario-id="<?php echo $prontuario['id']; ?>">
-                                                        Salvar
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger delete-btn"
-                                                        data-prontuario-id="<?php echo $prontuario['id']; ?>">
-                                                        Excluir
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                        <tr>
+                                            <td contenteditable="true" class="editable-cell" data-field="paciente_id">
+                                                <?php echo $paciente['tx_nome']; ?>
+                                            </td>
+                                            <td contenteditable="true" class="editable-cell" data-field="tx_obs">
+                                                <?php echo $prontuario['tx_obs']; ?>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary save-btn"
+                                                    data-prontuario-id="<?php echo $prontuario['id']; ?>">
+                                                    Salvar
+                                                </button>
+                                                <button type="button" class="btn btn-danger delete-btn"
+                                                    data-prontuario-id="<?php echo $prontuario['id']; ?>">
+                                                    Excluir
+                                                </button>
+                                            </td>
+                                        </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
@@ -358,9 +423,9 @@ echo '<script>var veterinarioData = ' . json_encode([
 
                                                             <!-- Loop através dos pacientes para gerar as opções do select -->
                                                             <?php foreach ($pacientes_data as $paciente): ?>
-                                                                <option value="<?php echo $paciente['id']; ?>">
-                                                                    <?php echo $paciente['tx_nome']; ?>
-                                                                </option>
+                                                            <option value="<?php echo $paciente['id']; ?>">
+                                                                <?php echo $paciente['tx_nome']; ?>
+                                                            </option>
                                                             <?php endforeach; ?>
                                                         </select>
                                                     </div>
@@ -450,66 +515,66 @@ echo '<script>var veterinarioData = ' . json_encode([
     <script src="js/demo/datatables-demo.js"></script>
 
     <script>
-        $(document).ready(function () {
-            $('.delete-btn').click(function () {
-                const prontuario_id = $(this).data('prontuario-id');
+    $(document).ready(function() {
+        $('.delete-btn').click(function() {
+            const prontuario_id = $(this).data('prontuario-id');
 
-                if (confirm('Tem certeza de que deseja excluir este prontuário?')) {
-                    $.ajax({
-                        type: 'POST',
-                        url: 'excluir_prontuario.php',
-                        data: {
-                            id: prontuario_id
-                        },
-                        success: function (data) {
-                            if (data === 'success') {
-                                console.log('Prontuário excluído com sucesso.');
-                                location.reload();
-                            } else {
-                                console.error('Falha ao excluir prontuário.');
-                            }
+            if (confirm('Tem certeza de que deseja excluir este prontuário?')) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'excluir_prontuario.php',
+                    data: {
+                        id: prontuario_id
+                    },
+                    success: function(data) {
+                        if (data === 'success') {
+                            console.log('Prontuário excluído com sucesso.');
+                            location.reload();
+                        } else {
+                            console.error('Falha ao excluir prontuário.');
                         }
-                    });
-                }
-            });
+                    }
+                });
+            }
         });
+    });
     </script>
 
     <script>
-        $(document).ready(function () {
-            $('.save-btn').click(function () {
-                var prontuarioId = $(this).data('prontuario-id');
-                var row = $(this).closest('tr');
-                var obsProntuario = row.find('[data-field="tx_obs"]').text().trim();
-                var pacienteId = row.find('[data-field="paciente_id"]').val().trim();
+    $(document).ready(function() {
+        $('.save-btn').click(function() {
+            var prontuarioId = $(this).data('prontuario-id');
+            var row = $(this).closest('tr');
+            var obsProntuario = row.find('[data-field="tx_obs"]').text().trim();
+            var pacienteId = row.find('[data-field="paciente_id"]').val().trim();
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'atualizar_prontuario.php',
-                    data: {
-                        id: prontuarioId,
-                        obs: obsProntuario,
-                        paciente_id: pacienteId
-                    },
-                    success: function (response) {
-                        if (response === 'success') {
-                            console.log('Prontuário atualizado com sucesso.');
-                        } else {
-                            console.error('Falha na atualização do prontuário.');
-                        }
-                    },
-                    error: function () {
-                        console.error('Erro na solicitação AJAX.');
+            $.ajax({
+                type: 'POST',
+                url: 'atualizar_prontuario.php',
+                data: {
+                    id: prontuarioId,
+                    obs: obsProntuario,
+                    paciente_id: pacienteId
+                },
+                success: function(response) {
+                    if (response === 'success') {
+                        console.log('Prontuário atualizado com sucesso.');
+                    } else {
+                        console.error('Falha na atualização do prontuário.');
                     }
-                });
+                },
+                error: function() {
+                    console.error('Erro na solicitação AJAX.');
+                }
             });
         });
+    });
     </script>
 
     <style>
-        .table-responsive {
-            overflow-x: hidden;
-        }
+    .table-responsive {
+        overflow-x: hidden;
+    }
     </style>
 
 </body>
