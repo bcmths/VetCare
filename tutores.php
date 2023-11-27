@@ -456,27 +456,27 @@ echo '<script>var veterinarioData = ' . json_encode([
         $(document).ready(function () {
             // Adicione um evento de clique aos botões "Excluir"
             $('.delete-btn').click(function () {
-                const usuario_id = $(this).data('usuario-id');
+                const tutor_id = $(this).data('tutor-id');
 
                 // Confirmar com o usuário antes de excluir
-                if (confirm('Tem certeza de que deseja excluir este usuário?')) {
+                if (confirm('Tem certeza de que deseja excluir este tutor?')) {
                     // Realizar uma solicitação AJAX para excluir o usuário
                     $.ajax({
                         type: 'POST',
-                        url: 'excluir_usuario.php', // Crie um arquivo para a exclusão dos usuários
+                        url: 'excluir_tutor.php', // Crie um arquivo para a exclusão dos usuários
                         data: {
-                            id: usuario_id
+                            id: tutor_id
                         },
                         success: function (data) {
                             // Verificar a resposta do servidor
                             if (data === 'success') {
                                 // Exclusão bem-sucedida
-                                console.log('Usuário excluído com sucesso.');
+                                console.log('Tutor excluído com sucesso.');
                                 // Recarregue a página ou atualize a tabela para refletir a exclusão
                                 location.reload();
                             } else {
                                 // Exibir uma mensagem de erro se a exclusão falhar
-                                console.error('Falha ao excluir usuário.');
+                                console.error('Falha ao excluir tutor.');
                             }
                         }
                     });
@@ -488,29 +488,29 @@ echo '<script>var veterinarioData = ' . json_encode([
     <script>
         $(document).ready(function () {
             $('.save-btn').click(function () {
-                var usuarioId = $(this).data('usuario-id');
+                var tutor_id = $(this).data('tutor-id');
                 var row = $(this).closest('tr');
-                var nomeUsuario = row.find('[data-field="tx_usuario"]').text().trim();
-                var senha = row.find('[data-field="tx_senha"]').text().trim();
-                var vetId = row.find('[data-field="vet_id"]').val().trim();
-
-                // Realizar uma solicitação AJAX para atualizar o usuário
+                var nome = row.find('[data-field="tx_nome"]').text().trim();
+                var email = row.find('[data-field="tx_email"]').text().trim();
+                var telefone = row.find('[data-field="nb_telefone"]').text().trim();
+                var endereco = row.find('[data-field="tx_endereco"]').val().trim();
                 $.ajax({
                     type: 'POST',
-                    url: 'atualizar_usuario.php',
+                    url: 'atualizar_tutor.php',
                     data: {
-                        id: usuarioId,
-                        nomeUsuario: nomeUsuario,
-                        senha: senha,
-                        vetId: vetId
+                        id: tutor_id,
+                        nome: nome,
+                        email: email,
+                        telefone: telefone,
+                        endereco: endereco
                     },
                     success: function (response) {
                         if (response === 'success') {
                             // Atualização bem-sucedida
-                            console.log('Usuário atualizado com sucesso.');
+                            console.log('Tutor atualizado com sucesso.');
                         } else {
                             // Atualização falhou
-                            console.error('Falha na atualização do usuário.');
+                            console.error('Falha na atualização do tutor.');
                         }
                     },
                     error: function () {
