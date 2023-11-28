@@ -448,8 +448,16 @@ echo '</script>';
                                         '#3498db',
                                         '#e67e22',
                                     ],
+
                                 }],
+                                options: {
+                                    responsive: true,
+                                    legend: {
+                                        display: false
+                                    }
+                                }
                             },
+
                         });
                         </script>
                     </div>
