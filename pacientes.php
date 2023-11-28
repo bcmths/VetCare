@@ -213,14 +213,13 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="modalSenhaMasterLabel">Digite a senha master</h5>
+                            <h5 class="modal-title" id="modalSenhaMasterLabel">Digite a senha de administrador</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <input type="password" id="senhaMasterInput" class="form-control"
-                                placeholder="Senha master">
+                            <input type="password" id="senhaMasterInput" class="form-control" placeholder="Senha">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary"

@@ -55,7 +55,20 @@ if ($total_patients > 0) {
     $percent_complete = 0;
 }
 
+$animais_query = "SELECT tb_paciente.tx_animal, COUNT(*) as total_animais
+FROM tb_paciente
+WHERE tb_paciente.tx_animal IN ('Gato', 'Cachorro')
+GROUP BY tb_paciente.tx_animal";
+$animais_result = $pdo->query($animais_query);
+$animais_data = [];
+
+while ($row = $animais_result->fetch(PDO::FETCH_ASSOC)) {
+    $animais_data[$row['tx_animal']] = (int) $row['total_animais'];
+}
+
+
 echo '<script>';
+echo 'var animaisData = ' . json_encode($animais_data) . ';';
 echo 'var pacientesData = ' . json_encode($pacientes_data) . ';';
 echo '</script>';
 ?>
@@ -153,41 +166,41 @@ echo '</script>';
             </li>
             <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
             <script>
-                $(document).ready(function () {
-                    $(".usuarios-link").click(function () {
-                        $("#modalSenhaMaster").modal("show");
-                    });
+            $(document).ready(function() {
+                $(".usuarios-link").click(function() {
+                    $("#modalSenhaMaster").modal("show");
                 });
+            });
             </script>
 
             <script>
-                function verificarSenhaMaster() {
+            function verificarSenhaMaster() {
 
-                    $("#modalSenhaMaster").modal("show");
+                $("#modalSenhaMaster").modal("show");
 
-                    var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
+                var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
 
-                    $.ajax({
-                        type: 'POST',
-                        url: 'verificar_senha_master.php',
-                        data: {
-                            verificar_senha_master: true,
-                            senha_master: senhaMasterDigitada
-                        },
-                        success: function (data) {
-                            if (data === 'success') {
+                $.ajax({
+                    type: 'POST',
+                    url: 'verificar_senha_master.php',
+                    data: {
+                        verificar_senha_master: true,
+                        senha_master: senhaMasterDigitada
+                    },
+                    success: function(data) {
+                        if (data === 'success') {
 
-                                window.location.href = 'usuarios.php';
-                            } else {
+                            window.location.href = 'usuarios.php';
+                        } else {
 
-                                alert("Senha Master incorreta. Tente novamente.");
-                            }
-                        },
-                        error: function () {
-                            console.error('Erro na solicitação AJAX.');
+                            alert("Senha Master incorreta. Tente novamente.");
                         }
-                    });
-                }
+                    },
+                    error: function() {
+                        console.error('Erro na solicitação AJAX.');
+                    }
+                });
+            }
             </script>
 
             <div class="modal fade" id="modalSenhaMaster" tabindex="-1" role="dialog"
@@ -195,14 +208,13 @@ echo '</script>';
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="modalSenhaMasterLabel">Digite a senha master</h5>
+                            <h5 class="modal-title" id="modalSenhaMasterLabel">Digite a senha de administrador</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <input type="password" id="senhaMasterInput" class="form-control"
-                                placeholder="Senha master">
+                            <input type="password" id="senhaMasterInput" class="form-control" placeholder="Senha">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary"
@@ -238,23 +250,23 @@ echo '</script>';
                     <div id="dateDisplay"></div>
 
                     <script>
-                        function updateDate() {
-                            const dateElement = document.getElementById('dateDisplay');
-                            const currentDate = new Date();
-                            const options = {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            };
-                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                                options);
+                    function updateDate() {
+                        const dateElement = document.getElementById('dateDisplay');
+                        const currentDate = new Date();
+                        const options = {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        };
+                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                            options);
 
-                            dateElement.textContent = `Hoje é ${formattedDate}.`;
-                        }
+                        dateElement.textContent = `Hoje é ${formattedDate}.`;
+                    }
 
-                        updateDate();
-                        setInterval(updateDate, 1000);
+                    updateDate();
+                    setInterval(updateDate, 1000);
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -402,43 +414,122 @@ echo '</script>';
                             </div>
                         </div>
                         <style>
-                            .chart-pie {
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                            }
+                        .chart-pie {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
 
-                            #myPieChart {
-                                margin: 0 auto;
-                            }
+                        #myPieChart {
+                            margin: 0 auto;
+                        }
                         </style>
 
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                         <script>
-                            var pacientesData = <?php echo json_encode($pacientes_data); ?>;
+                        var pacientesData = <?php echo json_encode($pacientes_data); ?>;
 
-                            var ctx = document.getElementById('myPieChart').getContext('2d');
-                            var myPieChart = new Chart(ctx, {
-                                type: 'pie',
-                                data: {
-                                    labels: Object.keys(pacientesData),
-                                    datasets: [{
-                                        data: Object.values(pacientesData),
-                                        backgroundColor: [
-                                            '#4e73df',
-                                            '#1cc88a',
-                                            '#36b9cc',
-                                            '#d4e765',
-                                            '#f6c23e',
-                                            '#e74a3b',
-                                            '#4e9a5e',
-                                            '#9b59b6',
-                                            '#3498db',
-                                            '#e67e22',
-                                        ],
-                                    }],
-                                },
+                        var ctx = document.getElementById('myPieChart').getContext('2d');
+                        var myPieChart = new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: Object.keys(pacientesData),
+                                datasets: [{
+                                    data: Object.values(pacientesData),
+                                    backgroundColor: [
+                                        '#4e73df',
+                                        '#1cc88a',
+                                        '#36b9cc',
+                                        '#d4e765',
+                                        '#f6c23e',
+                                        '#e74a3b',
+                                        '#4e9a5e',
+                                        '#9b59b6',
+                                        '#3498db',
+                                        '#e67e22',
+                                    ],
+                                }],
+                            },
+                        });
+                        </script>
+                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3  align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                Quantidade de Cachorros e Gatos
+                            </h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="chart-bar pt-4 pb-2">
+                                <canvas id="myBarChart"></canvas>
+                            </div>
+                        </div>
+                        <style>
+                        .chart-bar {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+
+                        #myBarChart {
+                            width: 100%;
+                            height: auto;
+                            /* ou a altura desejada */
+                        }
+                        </style>
+
+                        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                        <script>
+                        var animaisData = <?php echo json_encode($animais_data); ?>;
+                        console.log(animaisData)
+                        console.log('oi')
+
+                        var ctx = document.getElementById('myBarChart').getContext('2d');
+                        var labels = Object.keys(animaisData);
+
+                        var backgroundColors = [
+                            '#4e73df',
+                            '#1cc88a',
+                            '#36b9cc',
+                            '#d4e765',
+                            '#f6c23e',
+                            '#e74a3b',
+                            '#4e9a5e',
+                            '#9b59b6',
+                            '#3498db',
+                            '#e67e22',
+                        ];
+                        let data = {
+                            labels: ['Animais'],
+                            datasets: []
+                        };
+
+                        Object.values(animaisData).forEach(function(valor, i) {
+                            data.datasets.push({
+                                label: labels[i],
+                                stack: 'Stack ' + i,
+                                data: [valor],
+                                backgroundColor: [
+                                    backgroundColors[i]
+                                ],
+                                borderColor: [
+                                    backgroundColors[i]
+                                ],
                             });
+                        });
+
+                        var options = {
+                            type: 'bar',
+                            data: data,
+                            options: {
+                                responsive: true,
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        };
+                        new Chart(ctx, options);
                         </script>
                     </div>
 
