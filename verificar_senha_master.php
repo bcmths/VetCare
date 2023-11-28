@@ -3,7 +3,7 @@ session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verificar_senha_master'])) {
     $senhaMasterDigitada = $_POST['senha_master'] ?? '';
-    $senhaMasterCorreta = '';
+    $senhaMasterCorreta = 'dudu1020';
 
     if ($senhaMasterDigitada === $senhaMasterCorreta) {
         // Senha correta, defina a variável de sessão

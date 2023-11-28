@@ -165,7 +165,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="prontuarios.php">
                     <i class="fa fa-file-medical"></i>
                     <span>Prontuários</span></a>
             </li>
@@ -376,7 +376,8 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                                 <?php echo $paciente['tx_raca']; ?>
                                             </td>
                                             <td>
-                                                <select class="tutor-select" data-field="tutor_id">
+                                                <select style="border-radius: 5px;" class="tutor-select"
+                                                    data-field="tutor_id">
                                                     <?php foreach ($tutores_data as $tutor): ?>
                                                     <option value="<?php echo $tutor['id']; ?>"
                                                         <?php if ($tutor['id'] == $paciente['tutor_id']) echo "selected"; ?>>
@@ -384,9 +385,11 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                                     </option>
                                                     <?php endforeach; ?>
                                                 </select>
+
                                             </td>
                                             <td>
-                                                <select class="veterinario-select" data-field="vet_id">
+                                                <select style="border-radius: 5px;" class="veterinario-select"
+                                                    data-field="vet_id">
                                                     <?php foreach ($veterinarios_data as $veterinario): ?>
                                                     <option value="<?php echo $veterinario['id']; ?>"
                                                         <?php if ($veterinario['id'] == $paciente['vet_id']) echo "selected"; ?>>

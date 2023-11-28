@@ -48,7 +48,9 @@ $veterinarios_result = $pdo->query($veterinarios_query);
 $veterinarios_data = [];
 
 while ($row = $veterinarios_result->fetch(PDO::FETCH_ASSOC)) {
-    $veterinarios_data[] = $row;
+    if ($row !== false) {
+        $veterinarios_data[] = $row;
+    }
 }
 
 // Consulta para recuperar informações do veterinário logado
@@ -56,15 +58,20 @@ $usuario_id = $_SESSION['user_id'];
 $vet_query = "SELECT tx_nome, tx_genero FROM tb_vet WHERE id = :usuario_id";
 $stmt = $pdo->prepare($vet_query);
 $stmt->execute(['usuario_id' => $usuario_id]);
+
 $vet = $stmt->fetch();
 
-// Inserir os dados do veterinário no HTML como um objeto JavaScript
+if ($vet !== false) {
+    // Continue com o processamento dos dados
+    echo '<script>var veterinarioData = ' . json_encode([
+        'nome' => $vet['tx_nome'],
+        'genero' => $vet['tx_genero']
+    ]) . ';</script>';
+}
+
 echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</script>';
-echo '<script>var veterinarioData = ' . json_encode([
-    'nome' => $vet['tx_nome'],
-    'genero' => $vet['tx_genero']
-]) . ';</script>';
 ?>
+
 
 
 <!DOCTYPE html>
@@ -77,7 +84,7 @@ echo '<script>var veterinarioData = ' . json_encode([
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>VetCare - Pacientes</title>
+    <title>VetCare - Veterinários</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />

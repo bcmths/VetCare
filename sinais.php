@@ -362,7 +362,8 @@ echo '<script>var veterinarioData = ' . json_encode([
                                         <?php foreach ($sinais_data as $sinais): ?>
                                         <tr>
                                             <td>
-                                                <select class="paciente-select" data-field="paciente_id">
+                                                <select style="border-radius: 5px;" class="paciente-select"
+                                                    data-field="paciente_id">
                                                     <?php foreach ($pacientes_data as $paciente): ?>
 
                                                     <option value="<?php echo $paciente['id']; ?>"

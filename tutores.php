@@ -551,7 +551,8 @@ echo '<script>var veterinarioData = ' . json_encode([
                 var nome = row.find('[data-field="tx_nome"]').text().trim();
                 var email = row.find('[data-field="tx_email"]').text().trim();
                 var telefone = row.find('[data-field="nb_telefone"]').text().trim();
-                var endereco = row.find('[data-field="tx_endereco"]').val().trim();
+                var endereco = row.find('[data-field="tx_endereco"]').text().trim();
+
                 $.ajax({
                     type: 'POST',
                     url: 'atualizar_tutor.php',
