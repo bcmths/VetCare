@@ -221,8 +221,7 @@ echo '<script>var veterinarioData = ' . json_encode([
                             </button>
                         </div>
                         <div class="modal-body">
-                            <input type="password" id="senhaMasterInput" class="form-control"
-                                placeholder="Senha">
+                            <input type="password" id="senhaMasterInput" class="form-control" placeholder="Senha">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary"
@@ -576,8 +575,11 @@ echo '<script>var veterinarioData = ' . json_encode([
     </script>
 
     <style>
-    .table-responsive {
-        overflow-x: hidden;
+    @media (min-width: 1132px) {
+
+        .table-responsive {
+            overflow-x: hidden;
+        }
     }
     </style>
 

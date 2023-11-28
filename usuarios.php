@@ -611,8 +611,11 @@ echo '<script>var usuarioData = ' . json_encode([
     </script>
 
     <style>
-        .table-responsive {
-            overflow-x: hidden;
+        @media (min-width: 1132px) {
+
+            .table-responsive {
+                overflow-x: hidden;
+            }
         }
     </style>
 

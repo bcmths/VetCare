@@ -613,10 +613,14 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
     </script>
 
     <style>
-    .table-responsive {
-        overflow-x: hidden;
+    @media (min-width: 1132px) {
+
+        .table-responsive {
+            overflow-x: hidden;
+        }
     }
     </style>
+
 
 </body>
 
