@@ -552,6 +552,7 @@ echo '<script>var veterinarioData = ' . json_encode([
                 success: function(response) {
                     if (response === 'success') {
                         console.log('Prontuário atualizado com sucesso.');
+                        location.reload();
                     } else {
                         console.error('Falha na atualização do prontuário.');
                     }

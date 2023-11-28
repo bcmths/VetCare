@@ -534,6 +534,7 @@ echo '<script>var usuarioData = ' . json_encode([
                         if (response === 'success') {
 
                             console.log('Usuário atualizado com sucesso.');
+                            location.reload();
                         } else {
 
                             console.error('Falha na atualização do usuário.');

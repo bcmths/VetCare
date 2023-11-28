@@ -599,6 +599,7 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                     if (response === 'success') {
 
                         console.log('Paciente atualizado com sucesso.');
+                        location.reload();
                     } else {
 
                         console.error('Falha na atualização do paciente.');

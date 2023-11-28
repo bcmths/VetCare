@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $sinais_query = "SELECT id, tx_descricao, paciente_id FROM tb_sinaisclinicos";
 $sinais_result = $pdo->query($sinais_query);
-
 $sinais_data = [];
 
 while ($row = $sinais_result->fetch(PDO::FETCH_ASSOC)) {
@@ -354,9 +353,8 @@ echo '<script>var veterinarioData = ' . json_encode([
                                                 <select style="border-radius: 5px;" class="paciente-select"
                                                     data-field="paciente_id">
                                                     <?php foreach ($pacientes_data as $paciente): ?>
-
                                                     <option value="<?php echo $paciente['id']; ?>"
-                                                        <?php if ($sinais['id'] == $paciente['id']) echo "selected"; ?>>
+                                                        <?php if ($sinais['paciente_id'] == $paciente['id']) echo "selected"; ?>>
                                                         <?php echo $paciente['tx_nome']; ?>
                                                     </option>
                                                     <?php endforeach; ?>
@@ -544,10 +542,7 @@ echo '<script>var veterinarioData = ' . json_encode([
             var sinaisId = $(this).data('sinais-id');
             var row = $(this).closest('tr');
             var descricao = row.find('[data-field="tx_descricao"]').text().trim();
-            var pacienteId = row.find('.paciente-select').val();
-            console.log(sinaisId)
-            console.log(descricao)
-            console.log(pacienteId)
+            var pacienteId = row.find('[data-field="paciente_id"]').val().trim();
 
             $.ajax({
                 type: 'POST',
@@ -561,6 +556,7 @@ echo '<script>var veterinarioData = ' . json_encode([
                     if (response === 'success') {
 
                         console.log('Sinais clínicos atualizados com sucesso.');
+                        location.reload();
                     } else {
 
                         console.error('Falha na atualização dos sinais clínicos.');

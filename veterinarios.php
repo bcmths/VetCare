@@ -160,41 +160,41 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
             </li>
             <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
             <script>
-            $(document).ready(function() {
-                $(".usuarios-link").click(function() {
-                    $("#modalSenhaMaster").modal("show");
+                $(document).ready(function () {
+                    $(".usuarios-link").click(function () {
+                        $("#modalSenhaMaster").modal("show");
+                    });
                 });
-            });
             </script>
 
             <script>
-            function verificarSenhaMaster() {
+                function verificarSenhaMaster() {
 
-                $("#modalSenhaMaster").modal("show");
+                    $("#modalSenhaMaster").modal("show");
 
-                var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
+                    var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'verificar_senha_master.php',
-                    data: {
-                        verificar_senha_master: true,
-                        senha_master: senhaMasterDigitada
-                    },
-                    success: function(data) {
-                        if (data === 'success') {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'verificar_senha_master.php',
+                        data: {
+                            verificar_senha_master: true,
+                            senha_master: senhaMasterDigitada
+                        },
+                        success: function (data) {
+                            if (data === 'success') {
 
-                            window.location.href = 'usuarios.php';
-                        } else {
+                                window.location.href = 'usuarios.php';
+                            } else {
 
-                            alert("Senha Master incorreta. Tente novamente.");
+                                alert("Senha Master incorreta. Tente novamente.");
+                            }
+                        },
+                        error: function () {
+                            console.error('Erro na solicitação AJAX.');
                         }
-                    },
-                    error: function() {
-                        console.error('Erro na solicitação AJAX.');
-                    }
-                });
-            }
+                    });
+                }
             </script>
 
             <div class="modal fade" id="modalSenhaMaster" tabindex="-1" role="dialog"
@@ -244,23 +244,23 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                     <div id="dateDisplay"></div>
 
                     <script>
-                    function updateDate() {
-                        const dateElement = document.getElementById('dateDisplay');
-                        const currentDate = new Date();
-                        const options = {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        };
-                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                            options);
+                        function updateDate() {
+                            const dateElement = document.getElementById('dateDisplay');
+                            const currentDate = new Date();
+                            const options = {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            };
+                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                                options);
 
-                        dateElement.textContent = `Hoje é ${formattedDate}.`;
-                    }
+                            dateElement.textContent = `Hoje é ${formattedDate}.`;
+                        }
 
-                    updateDate();
-                    setInterval(updateDate, 1000);
+                        updateDate();
+                        setInterval(updateDate, 1000);
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -336,24 +336,24 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                     </thead>
                                     <tbody>
                                         <?php foreach ($veterinarios_data as $veterinario): ?>
-                                        <tr>
-                                            <td contenteditable="true" class="editable-cell" data-field="tx_nome">
-                                                <?php echo $veterinario['tx_nome']; ?>
-                                            </td>
-                                            <td contenteditable="true" class="editable-cell" data-field="tx_genero">
-                                                <?php echo $veterinario['tx_genero']; ?>
-                                            </td>
-                                            <td>
-                                                <button type="submit" class="btn btn-primary save-btn"
-                                                    data-veterinario-id="<?php echo $veterinario['id']; ?>">
-                                                    Salvar
-                                                </button>
-                                                <button class="btn btn-danger delete-btn"
-                                                    data-veterinario-id="<?php echo $veterinario['id']; ?>">
-                                                    Excluir
-                                                </button>
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_nome">
+                                                    <?php echo $veterinario['tx_nome']; ?>
+                                                </td>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_genero">
+                                                    <?php echo $veterinario['tx_genero']; ?>
+                                                </td>
+                                                <td>
+                                                    <button type="submit" class="btn btn-primary save-btn"
+                                                        data-veterinario-id="<?php echo $veterinario['id']; ?>">
+                                                        Salvar
+                                                    </button>
+                                                    <button class="btn btn-danger delete-btn"
+                                                        data-veterinario-id="<?php echo $veterinario['id']; ?>">
+                                                        Excluir
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
@@ -480,77 +480,78 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
     <script src="js/demo/datatables-demo.js"></script>
 
     <script>
-    $(document).ready(function() {
+        $(document).ready(function () {
 
-        $('.delete-btn').click(function() {
-            const veterinario_id = $(this).data('veterinario-id');
+            $('.delete-btn').click(function () {
+                const veterinario_id = $(this).data('veterinario-id');
 
-            if (confirm('Tem certeza de que deseja excluir este veterinário?')) {
+                if (confirm('Tem certeza de que deseja excluir este veterinário?')) {
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'excluir_veterinario.php',
-                    data: {
-                        id: veterinario_id
-                    },
-                    success: function(data) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'excluir_veterinario.php',
+                        data: {
+                            id: veterinario_id
+                        },
+                        success: function (data) {
 
-                        if (data === 'success') {
+                            if (data === 'success') {
 
-                            console.log('Veterinário excluído com sucesso.');
+                                console.log('Veterinário excluído com sucesso.');
 
-                            location.reload();
-                        } else {
+                                location.reload();
+                            } else {
 
-                            console.error('Falha ao excluir veterinário.');
+                                console.error('Falha ao excluir veterinário.');
+                            }
                         }
-                    }
-                });
-            }
-        });
-    });
-    </script>
-
-    <script>
-    $(document).ready(function() {
-        $('.save-btn').click(function() {
-            var veterinarioId = $(this).data('veterinario-id');
-            var row = $(this).closest('tr');
-            var nome = row.find('[data-field="tx_nome"]').text().trim();
-            var genero = row.find('[data-field="tx_genero"]').text().trim();
-
-            $.ajax({
-                type: 'POST',
-                url: 'atualizar_veterinario.php',
-                data: {
-                    id: veterinarioId,
-                    nome: nome,
-                    genero: genero
-                },
-                success: function(response) {
-                    if (response === 'success') {
-
-                        console.log('Veterinário atualizado com sucesso.');
-                    } else {
-
-                        console.error('Falha na atualização do veterinário.');
-                    }
-                },
-                error: function() {
-                    console.error('Erro na solicitação AJAX.');
+                    });
                 }
             });
         });
-    });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('.save-btn').click(function () {
+                var veterinarioId = $(this).data('veterinario-id');
+                var row = $(this).closest('tr');
+                var nome = row.find('[data-field="tx_nome"]').text().trim();
+                var genero = row.find('[data-field="tx_genero"]').text().trim();
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'atualizar_veterinario.php',
+                    data: {
+                        id: veterinarioId,
+                        nome: nome,
+                        genero: genero
+                    },
+                    success: function (response) {
+                        if (response === 'success') {
+
+                            console.log('Veterinário atualizado com sucesso.');
+                            location.reload();
+                        } else {
+
+                            console.error('Falha na atualização do veterinário.');
+                        }
+                    },
+                    error: function () {
+                        console.error('Erro na solicitação AJAX.');
+                    }
+                });
+            });
+        });
     </script>
 
     <style>
-    @media (min-width: 1132px) {
+        @media (min-width: 1132px) {
 
-        .table-responsive {
-            overflow-x: hidden;
+            .table-responsive {
+                overflow-x: hidden;
+            }
         }
-    }
     </style>
 
 </body>
