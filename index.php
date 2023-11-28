@@ -139,7 +139,7 @@ echo '</script>';
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="prontuarios.php">
                     <i class="fa fa-file-medical"></i>
                     <span>Prontuários</span></a>
             </li>
