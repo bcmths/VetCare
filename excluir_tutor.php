@@ -1,5 +1,4 @@
 <?php
-// Inclua o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

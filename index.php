@@ -16,7 +16,6 @@ $tutores_result = $pdo->query($tutores_query);
 $prontuarios_query = "SELECT * FROM tb_prontuario";
 $prontuarios_result = $pdo->query($prontuarios_query);
 
-// Consulta para obter o número de pacientes por veterinário
 $pacientes_query = "SELECT tb_vet.tx_nome, COUNT(DISTINCT tb_paciente.id) as total_pacientes
 FROM tb_paciente
 INNER JOIN tb_vet ON tb_paciente.vet_id = tb_vet.id
@@ -28,26 +27,23 @@ while ($row = $pacientes_result->fetch(PDO::FETCH_ASSOC)) {
     $pacientes_data[$row['tx_nome']] = (int) $row['total_pacientes'];
 }
 
-// Cálculos adicionais
 $count_veterinarians_query = "SELECT COUNT(*) AS total_veterinarians FROM tb_vet";
 $stmt = $pdo->query($count_veterinarians_query);
 $count_result = $stmt->fetch();
 $total_veterinarians = $count_result['total_veterinarians'];
 
-// Consulta para contar o número total de pacientes
 $count_patients_query = "SELECT COUNT(*) AS total_patients FROM tb_paciente";
 $stmt = $pdo->query($count_patients_query);
 $count_result = $stmt->fetch();
 $total_patients = $count_result['total_patients'];
 
-// Consulta para contar o número total de pacientes com prontuário
 $count_prontuarios_query = "SELECT COUNT(DISTINCT paciente_id) AS total_prontuarios FROM tb_prontuario";
 $stmt = $pdo->query($count_prontuarios_query);
 $count_prontuarios_result = $stmt->fetch();
 $total_prontuarios = $count_prontuarios_result['total_prontuarios'];
 
 if ($total_patients > 0) {
-    // Verificar se o número de prontuários é igual ao número de pacientes
+
     $all_patients_have_prontuarios = ($total_prontuarios == $total_patients);
 
     if ($all_patients_have_prontuarios) {
@@ -63,7 +59,6 @@ echo '<script>';
 echo 'var pacientesData = ' . json_encode($pacientes_data) . ';';
 echo '</script>';
 ?>
-
 
 <!DOCTYPE html>
 <html lang="pt">
@@ -168,13 +163,10 @@ echo '</script>';
             <script>
                 function verificarSenhaMaster() {
 
-                    // Exibe o modal
                     $("#modalSenhaMaster").modal("show");
 
-                    // Obtém a senha master digitada
                     var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
 
-                    // Faz a solicitação AJAX
                     $.ajax({
                         type: 'POST',
                         url: 'verificar_senha_master.php',
@@ -184,10 +176,10 @@ echo '</script>';
                         },
                         success: function (data) {
                             if (data === 'success') {
-                                // Senha master verificada com sucesso, redirecionar para a página de usuários
+
                                 window.location.href = 'usuarios.php';
                             } else {
-                                // Senha master incorreta, exibir uma mensagem de erro
+
                                 alert("Senha Master incorreta. Tente novamente.");
                             }
                         },
@@ -256,14 +248,13 @@ echo '</script>';
                                 day: 'numeric'
                             };
                             const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                                options); // Altere 'pt-BR' para o código de idioma desejado
+                                options);
 
                             dateElement.textContent = `Hoje é ${formattedDate}.`;
                         }
 
-                        // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                        updateDate(); // Chama a função para exibir a data inicial
-                        setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                        updateDate();
+                        setInterval(updateDate, 1000);
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -511,7 +502,6 @@ echo '</script>';
 
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
 
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>

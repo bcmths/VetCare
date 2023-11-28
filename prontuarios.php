@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Verificar se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
-// Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
 function adicionarProntuario($pdo, $obs, $paciente_id)
@@ -27,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($obs) && !empty($paciente_id)) {
             if (adicionarProntuario($pdo, $obs, $paciente_id)) {
-                // Redirecionar de volta para a página de gerenciamento de prontuários após a adição
+
                 header("Location: prontuarios.php");
                 exit;
             } else {
@@ -39,11 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Consulta para recuperar informações de prontuários
 $prontuarios_query = "SELECT id, tx_obs, paciente_id FROM tb_prontuario";
 $prontuarios_result = $pdo->query($prontuarios_query);
 
-// Inserir os dados dos prontuários no HTML como um objeto JavaScript
 $prontuarios_data = [];
 
 while ($row = $prontuarios_result->fetch(PDO::FETCH_ASSOC)) {
@@ -83,7 +79,6 @@ echo '<script>var veterinarioData = ' . json_encode([
     'nome' => $vet['tx_nome']
 ]) . ';</script>';
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -188,13 +183,10 @@ echo '<script>var veterinarioData = ' . json_encode([
             <script>
             function verificarSenhaMaster() {
 
-                // Exibe o modal
                 $("#modalSenhaMaster").modal("show");
 
-                // Obtém a senha master digitada
                 var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
 
-                // Faz a solicitação AJAX
                 $.ajax({
                     type: 'POST',
                     url: 'verificar_senha_master.php',
@@ -204,10 +196,10 @@ echo '<script>var veterinarioData = ' . json_encode([
                     },
                     success: function(data) {
                         if (data === 'success') {
-                            // Senha master verificada com sucesso, redirecionar para a página de usuários
+
                             window.location.href = 'usuarios.php';
                         } else {
-                            // Senha master incorreta, exibir uma mensagem de erro
+
                             alert("Senha Master incorreta. Tente novamente.");
                         }
                     },
@@ -275,14 +267,13 @@ echo '<script>var veterinarioData = ' . json_encode([
                             day: 'numeric'
                         };
                         const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                            options); // Altere 'pt-BR' para o código de idioma desejado
+                            options);
 
                         dateElement.textContent = `Hoje é ${formattedDate}.`;
                     }
 
-                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                    updateDate(); // Chama a função para exibir a data inicial
-                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                    updateDate();
+                    setInterval(updateDate, 1000);
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -389,7 +380,6 @@ echo '<script>var veterinarioData = ' . json_encode([
                                     </tbody>
                                 </table>
 
-
                                 <!-- Botão para abrir o modal -->
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
                                     data-target="#modalAddProntuario">
@@ -433,7 +423,6 @@ echo '<script>var veterinarioData = ' . json_encode([
                                                         </select>
                                                     </div>
 
-
                                                     <button type="submit" class="btn btn-primary" name="add_prontuario"
                                                         id="addProntuarioButton">Salvar Prontuário</button>
                                                 </form>
@@ -445,7 +434,6 @@ echo '<script>var veterinarioData = ' . json_encode([
                                         </div>
                                     </div>
                                 </div>
-
 
                             </div>
                         </div>

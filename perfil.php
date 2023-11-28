@@ -1,44 +1,35 @@
 <?php
 session_start();
 
-// Verificar se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
-// Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
-// Obtendo dados dos veterinários
 $veterinarios_query = "SELECT id, tx_nome FROM tb_vet";
 $veterinarios_result = $pdo->query($veterinarios_query);
 
-// Obtendo dados dos usuários
 $usuarios_query = "SELECT id, tx_usuario, tx_senha, vet_id FROM tb_usuario";
 $usuarios_result = $pdo->query($usuarios_query);
 
-// Construindo array de veterinários
 $veterinarios_data = [];
 while ($row = $veterinarios_result->fetch(PDO::FETCH_ASSOC)) {
     $veterinarios_data[] = $row;
 }
 
-// Construindo array de usuários
 $usuarios_data = [];
 while ($row = $usuarios_result->fetch(PDO::FETCH_ASSOC)) {
     $usuarios_data[] = $row;
 }
 
-// Consulta para recuperar informações do usuário logado
 $usuario_id = $_SESSION['user_id'];
 $usuario_query = "SELECT tx_usuario, tx_senha, vet_id FROM tb_usuario WHERE id = :usuario_id";
 $stmt = $pdo->prepare($usuario_query);
 $stmt->execute(['usuario_id' => $usuario_id]);
 $usuario = $stmt->fetch();
 
-
-// Inserir os dados do usuário no HTML como um objeto JavaScript
 echo '<script>var usuariosData = ' . json_encode($usuarios_data) . ';</script>';
 echo '<script>var usuarioData = ' . json_encode([
     'nome' => $usuario['tx_usuario'],
@@ -46,8 +37,6 @@ echo '<script>var usuarioData = ' . json_encode([
     'vet_id' => $usuario['vet_id']
 ]) . ';</script>';
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -154,13 +143,10 @@ echo '<script>var usuarioData = ' . json_encode([
             <script>
             function verificarSenhaMaster() {
 
-                // Exibe o modal
                 $("#modalSenhaMaster").modal("show");
 
-                // Obtém a senha master digitada
                 var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
 
-                // Faz a solicitação AJAX
                 $.ajax({
                     type: 'POST',
                     url: 'verificar_senha_master.php',
@@ -170,10 +156,10 @@ echo '<script>var usuarioData = ' . json_encode([
                     },
                     success: function(data) {
                         if (data === 'success') {
-                            // Senha master verificada com sucesso, redirecionar para a página de usuários
+
                             window.location.href = 'usuarios.php';
                         } else {
-                            // Senha master incorreta, exibir uma mensagem de erro
+
                             alert("Senha Master incorreta. Tente novamente.");
                         }
                     },
@@ -242,14 +228,13 @@ echo '<script>var usuarioData = ' . json_encode([
                             day: 'numeric'
                         };
                         const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                            options); // Altere 'pt-BR' para o código de idioma desejado
+                            options);
 
                         dateElement.textContent = `Hoje é ${formattedDate}.`;
                     }
 
-                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                    updateDate(); // Chama a função para exibir a data inicial
-                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                    updateDate();
+                    setInterval(updateDate, 1000);
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -313,7 +298,6 @@ echo '<script>var usuarioData = ' . json_encode([
                                 <?php echo $prefixo . ' ' . $vet['tx_nome']; ?>
                             </h3>
                         </div>
-
 
                         <div class="card-body">
                             <?php foreach ($usuarios_data as $usuario): ?>

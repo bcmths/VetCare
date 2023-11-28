@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Verificar se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
-// Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
 function adicionarUsuario($pdo, $usuario, $senha, $vet_id)
@@ -30,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($usuario) && !empty($senha) && !empty($vet_id)) {
             if (adicionarUsuario($pdo, $usuario, $senha, $vet_id)) {
-                // Redirecionar de volta para a página de gerenciamento de usuários após a adição
+
                 header("Location: usuarios.php");
                 exit;
             } else {
@@ -42,36 +40,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Consulta para recuperar informações de usuários
-// Obtendo dados dos veterinários
 $veterinarios_query = "SELECT id, tx_nome FROM tb_vet";
 $veterinarios_result = $pdo->query($veterinarios_query);
 
-// Obtendo dados dos usuários
 $usuarios_query = "SELECT id, tx_usuario, tx_senha, vet_id FROM tb_usuario";
 $usuarios_result = $pdo->query($usuarios_query);
 
-// Construindo array de veterinários
 $veterinarios_data = [];
 while ($row = $veterinarios_result->fetch(PDO::FETCH_ASSOC)) {
     $veterinarios_data[] = $row;
 }
 
-// Construindo array de usuários
 $usuarios_data = [];
 while ($row = $usuarios_result->fetch(PDO::FETCH_ASSOC)) {
     $usuarios_data[] = $row;
 }
 
-// Consulta para recuperar informações do usuário logado
 $usuario_id = $_SESSION['user_id'];
 $usuario_query = "SELECT tx_usuario, tx_senha, vet_id FROM tb_usuario WHERE id = :usuario_id";
 $stmt = $pdo->prepare($usuario_query);
 $stmt->execute(['usuario_id' => $usuario_id]);
 $usuario = $stmt->fetch();
 
-
-// Inserir os dados do usuário no HTML como um objeto JavaScript
 echo '<script>var usuariosData = ' . json_encode($usuarios_data) . ';</script>';
 echo '<script>var usuarioData = ' . json_encode([
     'nome' => $usuario['tx_usuario'],
@@ -79,8 +69,6 @@ echo '<script>var usuarioData = ' . json_encode([
     'vet_id' => $usuario['vet_id']
 ]) . ';</script>';
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -173,13 +161,11 @@ echo '<script>var usuarioData = ' . json_encode([
                 </a>
             </li>
 
-
             <script>
                 function verificarSenhaMaster() {
                     var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
                     var senhaMasterCorreta = "sisvet";
 
-                    // Enviar a senha master para verificar no lado do servidor
                     $.ajax({
                         type: 'POST',
                         url: 'verificar_senha_master.php',
@@ -189,10 +175,10 @@ echo '<script>var usuarioData = ' . json_encode([
                         },
                         success: function (data) {
                             if (data === 'success') {
-                                // Senha master verificada com sucesso, recarregar a página de usuários
+
                                 window.location.href = 'usuarios.php';
                             } else {
-                                // Senha master incorreta, exibir uma mensagem de erro
+
                                 alert("Senha Master incorreta. Tente novamente.");
                             }
                         },
@@ -205,22 +191,19 @@ echo '<script>var usuarioData = ' . json_encode([
 
             <script>
                 $(document).ready(function () {
-                    // Inicializar o modal
+
                     $('#senhaMasterModal').modal({
-                        backdrop: 'static', // Evitar fechar clicando fora do modal
-                        keyboard: false // Evitar fechar pressionando a tecla Esc
+                        backdrop: 'static',
+                        keyboard: false
                     });
 
-                    // Adicionar evento de clique ao link de navegação
                     $('li.nav-item a.nav-link[href="#"]').on('click', function (e) {
                         e.preventDefault();
-                        // Exibir o modal
+
                         $('#senhaMasterModal').modal('show');
                     });
                 });
             </script>
-
-
 
             <!-- Modal para a senha master -->
             <div class="modal fade" id="senhaMasterModal" tabindex="-1" role="dialog"
@@ -246,8 +229,6 @@ echo '<script>var usuarioData = ' . json_encode([
                     </div>
                 </div>
             </div>
-
-
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block" />
@@ -284,14 +265,13 @@ echo '<script>var usuarioData = ' . json_encode([
                                 day: 'numeric'
                             };
                             const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                                options); // Altere 'pt-BR' para o código de idioma desejado
+                                options);
 
                             dateElement.textContent = `Hoje é ${formattedDate}.`;
                         }
 
-                        // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                        updateDate(); // Chama a função para exibir a data inicial
-                        setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                        updateDate();
+                        setInterval(updateDate, 1000);
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -354,7 +334,6 @@ echo '<script>var usuarioData = ' . json_encode([
                                 Usuários
                             </h3>
                         </div>
-
 
                         <!-- Usuário.php -->
                         <div class="card-body">
@@ -467,8 +446,6 @@ echo '<script>var usuarioData = ' . json_encode([
                             </div>
                         </div>
 
-
-
                     </div>
 
                 </div>
@@ -555,10 +532,10 @@ echo '<script>var usuarioData = ' . json_encode([
                     },
                     success: function (response) {
                         if (response === 'success') {
-                            // Atualização bem-sucedida
+
                             console.log('Usuário atualizado com sucesso.');
                         } else {
-                            // Atualização falhou
+
                             console.error('Falha na atualização do usuário.');
                         }
                     },
@@ -572,28 +549,27 @@ echo '<script>var usuarioData = ' . json_encode([
 
     <script>
         $(document).ready(function () {
-            // Adicione um evento de clique aos botões "Excluir"
+
             $('.delete-btn').click(function () {
                 const usuario_id = $(this).data('usuario-id');
 
-                // Confirmar com o usuário antes de excluir
                 if (confirm('Tem certeza de que deseja excluir este usuário?')) {
-                    // Realizar uma solicitação AJAX para excluir o usuário
+
                     $.ajax({
                         type: 'POST',
-                        url: 'excluir_usuario.php', // Crie um arquivo para a exclusão dos usuários
+                        url: 'excluir_usuario.php',
                         data: {
                             id: usuario_id
                         },
                         success: function (data) {
-                            // Verificar a resposta do servidor
+
                             if (data === 'success') {
-                                // Exclusão bem-sucedida
+
                                 console.log('Usuário excluído com sucesso.');
-                                // Recarregue a página ou atualize a tabela para refletir a exclusão
+
                                 location.reload();
                             } else {
-                                // Exibir uma mensagem de erro se a exclusão falhar
+
                                 console.error('Falha ao excluir usuário.');
                             }
                         }
@@ -605,15 +581,15 @@ echo '<script>var usuarioData = ' . json_encode([
 
     <script>
         function verificarSenhaMaster() {
-            // Substitua 'suaSenhaMaster' pela senha master real
+
             var senhaMasterDigitada = document.getElementById("senhaMaster").value;
             var senhaMasterCorreta = "sisvet";
 
             if (senhaMasterDigitada === senhaMasterCorreta) {
-                // Senha correta, redirecionar para a página de usuários
+
                 window.location.href = "usuarios.php";
             } else {
-                // Senha incorreta, limpar campo e exibir mensagem de erro
+
                 document.getElementById("senhaMaster").value = "";
                 alert("Senha Master incorreta. Tente novamente.");
             }
@@ -627,13 +603,12 @@ echo '<script>var usuarioData = ' . json_encode([
 
             if (senha !== confirmarSenha) {
                 alert('As senhas não coincidem. Por favor, verifique.');
-                return false; // Impede o envio do formulário se as senhas não coincidirem
+                return false;
             }
 
-            return true; // Permite o envio do formulário se as senhas coincidirem
+            return true;
         }
     </script>
-
 
     <style>
         .table-responsive {

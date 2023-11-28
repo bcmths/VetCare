@@ -1,26 +1,22 @@
 <?php
 session_start();
 
-// Verificar se o usuário está logado
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Incluir o arquivo de conexão com o banco de dados
+
     require_once 'conexao.php';
 
-    // Receber os dados do formulário
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Consulta para verificar as credenciais do usuário
     $query = "SELECT id, tx_usuario, tx_senha FROM tb_usuario WHERE tx_usuario = :username AND tx_senha = :password";
     $stmt = $pdo->prepare($query);
     $stmt->execute(['username' => $username, 'password' => $password]);
 
-    // Verificar se o login foi bem-sucedido
     if ($stmt->rowCount() > 0) {
         $user = $stmt->fetch();
         $_SESSION['user_id'] = $user['id'];

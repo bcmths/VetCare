@@ -3,15 +3,13 @@ session_start();
 
 require_once('conexao.php');
 
-$errors = []; // Para armazenar mensagens de erro
+$errors = [];
 
-// Processamento do formulário de adição de usuário
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
-    $password = $_POST['password']; // Adicione um campo para a senha
+    $password = $_POST['password'];
     $vet_id = $_POST['vet_id'];
 
-    // Validação: nome de usuário e senha são obrigatórios
     if (empty($username)) {
         $errors[] = "Nome de usuário é obrigatório.";
     }
@@ -19,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Senha é obrigatória.";
     }
 
-    // Verifique se o veterinário está selecionado
     if (empty($vet_id)) {
         $errors[] = "Somente veterinários podem ter acesso ao sistema.";
     }
@@ -34,18 +31,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        // Execute a consulta SQL para adicionar um novo usuário
+
         $insert_query = "INSERT INTO tb_usuario (tx_usuario, vet_id, tx_senha) VALUES (:username, :vet_id, :password)";
         $stmt = $pdo->prepare($insert_query);
         $stmt->execute(['username' => $username, 'vet_id' => $vet_id, 'password' => $password]);
 
-        // Redirecionar de volta para a página de login
         header("Location: login.php");
         exit;
     }
 }
 
-// Consulta para recuperar informações de todos os veterinários
 $vet_query = "SELECT id, tx_nome FROM tb_vet";
 $vet_result = $pdo->query($vet_query);
 ?>
@@ -64,9 +59,8 @@ $vet_result = $pdo->query($vet_query);
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet" />
+    <link href="https:
+        rel=" stylesheet" />
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet" />

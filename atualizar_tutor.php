@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $telefone = $_POST['telefone'];
     $endereco = $_POST['endereco'];
 
-
     $update_query = "UPDATE tb_tutor
                     SET tx_nome = :nome, tx_email = :email, nb_telefone = :telefone, tx_endereco = :endereco
                     WHERE id = :id";

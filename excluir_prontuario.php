@@ -1,5 +1,5 @@
 <?php
-// Inclua o arquivo de conexão com o banco de dados
+
 require_once 'conexao.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,8 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 } else {
-    // Responda a outros tipos de solicitações, se necessário
-    http_response_code(405); // Método não permitido
+
+    http_response_code(405);
     echo 'Method Not Allowed';
 }
 ?>

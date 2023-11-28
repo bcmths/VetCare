@@ -1,10 +1,9 @@
 <?php
-// Inclua seu arquivo de conexão com o banco de dados aqui
+
 require_once 'conexao.php';
 
-// Verifique se a solicitação é do tipo POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtenha os dados do formulário
+
     $pacienteId = $_POST['id'];
     $nome = $_POST['nome'];
     $animal = $_POST['animal'];
@@ -12,14 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tutorId = $_POST['tutor_id'];
     $vetId = $_POST['vet_id'];
 
-    // Atualize os dados do paciente no banco de dados
     $update_query = "UPDATE tb_paciente
                     SET tx_nome = :nome, tx_animal = :animal, tx_raca = :raca, tutor_id = :tutor_id, vet_id = :vet_id
                     WHERE id = :id";
 
     $stmt = $pdo->prepare($update_query);
 
-    // Execute a atualização
     if (
         $stmt->execute([
             'nome' => $nome,
@@ -30,15 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'id' => $pacienteId,
         ])
     ) {
-        // Atualização bem-sucedida
+
         echo 'success';
     } else {
-        // Falha na atualização
+
         echo 'error';
     }
 } else {
-    // Responda a outros tipos de solicitações, se necessário
-    http_response_code(405); // Método não permitido
+
+    http_response_code(405);
     echo 'Method Not Allowed';
 }
 ?>

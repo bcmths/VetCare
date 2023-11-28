@@ -1,27 +1,19 @@
 <?php
 session_start();
 
-// Verificar se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
-// Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
-// Consulta para recuperar informações do banco de dados
-// Aqui você pode criar consultas SQL para obter os dados das tabelas
-
-// Exemplo: Consulta para recuperar informações de pacientes
 $pacientes_query = "SELECT * FROM tb_paciente";
 $pacientes_result = $pdo->query($pacientes_query);
 
-// Exemplo: Consulta para recuperar informações de tutores
 $tutores_query = "SELECT * FROM tb_tutor";
 $tutores_result = $pdo->query($tutores_query);
 
-// Exemplo: Consulta para recuperar informações de prontuários
 $prontuarios_query = "SELECT * FROM tb_prontuario";
 $prontuarios_result = $pdo->query($prontuarios_query);
 
@@ -33,7 +25,6 @@ $prontuarios_result = $pdo->query($prontuarios_query);
 <head>
     <title>Dashboard - Sistema Veterinário</title>
     <style>
-        /* Estilos para a barra lateral */
         .sidenav {
             height: 100%;
             width: 200px;
@@ -41,7 +32,7 @@ $prontuarios_result = $pdo->query($prontuarios_query);
             top: 0;
             left: 0;
             background-color: #333;
-            /* Cor de fundo da barra lateral */
+
             padding-top: 20px;
         }
 
@@ -51,13 +42,13 @@ $prontuarios_result = $pdo->query($prontuarios_query);
             text-decoration: none;
             font-size: 16px;
             color: #fff;
-            /* Cor do texto dos botões */
+
             display: block;
         }
 
         .sidenav a:hover {
             background-color: #4CAF50;
-            /* Cor de fundo dos botões ao passar o mouse */
+
         }
     </style>
 </head>
@@ -87,7 +78,6 @@ $prontuarios_result = $pdo->query($prontuarios_query);
         $stmt->execute(['usuario_id' => $usuario_id]);
         $vet = $stmt->fetch();
 
-        // Verificar o gênero do veterinário e adicionar o prefixo adequado
         if ($vet['tx_genero'] === 'Masculino') {
             $prefixo = 'Dr.';
         } elseif ($vet['tx_genero'] === 'Feminino') {

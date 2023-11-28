@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-// Verificar se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
-// Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
-
-// Função para adicionar um novo paciente
 function adicionarPaciente($pdo, $nome, $animal, $raca, $tutor_id, $vet_id)
 {
     $insert_query = "INSERT INTO tb_paciente (tx_nome, tx_animal, tx_raca, tutor_id, vet_id)
@@ -36,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($nome) && !empty($animal) && !empty($raca) && !empty($tutor_id) && !empty($vet_id)) {
             if (adicionarPaciente($pdo, $nome, $animal, $raca, $tutor_id, $vet_id)) {
-                // Redirecionar de volta para a página de gerenciamento de pacientes após a adição
+
                 header("Location: pacientes.php");
                 exit;
             } else {
@@ -48,8 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-
-// Consulta para recuperar informações de pacientes
 $pacientes_query = "SELECT p.id, p.tx_nome, p.tx_animal, p.tx_raca, p.tutor_id, p.vet_id, t.tx_nome as tx_tutor, v.tx_nome as tx_veterinario
     FROM tb_paciente p
     LEFT JOIN tb_tutor t ON p.tutor_id = t.id
@@ -61,7 +55,6 @@ while ($row = $pacientes_result->fetch(PDO::FETCH_ASSOC)) {
     $pacientes_data[] = $row;
 }
 
-// Consulta para recuperar informações dos tutores
 $tutores_query = "SELECT id, tx_nome FROM tb_tutor";
 $tutores_result = $pdo->query($tutores_query);
 $tutores_data = [];
@@ -70,7 +63,6 @@ while ($row = $tutores_result->fetch(PDO::FETCH_ASSOC)) {
     $tutores_data[] = $row;
 }
 
-// Consulta para recuperar informações dos veterinários
 $veterinarios_query = "SELECT id, tx_nome FROM tb_vet";
 $veterinarios_result = $pdo->query($veterinarios_query);
 $veterinarios_data = [];
@@ -79,12 +71,10 @@ while ($row = $veterinarios_result->fetch(PDO::FETCH_ASSOC)) {
     $veterinarios_data[] = $row;
 }
 
-// Inserir os dados dos pacientes, tutores e veterinários no HTML como objetos JavaScript
 echo '<script>var pacientesData = ' . json_encode($pacientes_data) . ';</script>';
 echo '<script>var tutoresData = ' . json_encode($tutores_data) . ';</script>';
 echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</script>';
 ?>
-
 
 <!DOCTYPE html>
 <html lang="pt">
@@ -191,13 +181,10 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
             <script>
             function verificarSenhaMaster() {
 
-                // Exibe o modal
                 $("#modalSenhaMaster").modal("show");
 
-                // Obtém a senha master digitada
                 var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
 
-                // Faz a solicitação AJAX
                 $.ajax({
                     type: 'POST',
                     url: 'verificar_senha_master.php',
@@ -207,10 +194,10 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                     },
                     success: function(data) {
                         if (data === 'success') {
-                            // Senha master verificada com sucesso, redirecionar para a página de usuários
+
                             window.location.href = 'usuarios.php';
                         } else {
-                            // Senha master incorreta, exibir uma mensagem de erro
+
                             alert("Senha Master incorreta. Tente novamente.");
                         }
                     },
@@ -279,14 +266,13 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                             day: 'numeric'
                         };
                         const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                            options); // Altere 'pt-BR' para o código de idioma desejado
+                            options);
 
                         dateElement.textContent = `Hoje é ${formattedDate}.`;
                     }
 
-                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                    updateDate(); // Chama a função para exibir a data inicial
-                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                    updateDate();
+                    setInterval(updateDate, 1000);
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -464,7 +450,6 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                                                         </select>
                                                     </div>
 
-
                                                     <div class="form-group">
                                                         <label for="vet_id">Veterinário:</label>
                                                         <select name="vet_id" id="vet_id" class="form-control" required>
@@ -478,7 +463,6 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
 
                                                     <button type="submit" class="btn btn-primary" name="add_paciente"
                                                         id="addPatientButton">Adicionar Paciente</button>
-
 
                                                 </form>
                                             </div>
@@ -560,28 +544,27 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
 
     <script>
     $(document).ready(function() {
-        // Adicione um evento de clique aos botões "Excluir"
+
         $('.delete-btn').click(function() {
             const pacienteId = $(this).data('paciente-id');
 
-            // Confirmar com o usuário antes de excluir
             if (confirm('Tem certeza de que deseja excluir este paciente?')) {
-                // Realizar uma solicitação AJAX para excluir o paciente
+
                 $.ajax({
                     type: 'POST',
-                    url: 'excluir_paciente.php', // Crie um arquivo para a exclusão dos pacientes
+                    url: 'excluir_paciente.php',
                     data: {
                         id: pacienteId
                     },
                     success: function(data) {
-                        // Verificar a resposta do servidor
+
                         if (data === 'success') {
-                            // Exclusão bem-sucedida
+
                             console.log('Paciente excluído com sucesso.');
-                            // Recarregue a página ou atualize a tabela para refletir a exclusão
+
                             location.reload();
                         } else {
-                            // Exibir uma mensagem de erro se a exclusão falhar
+
                             console.error('Falha ao excluir paciente.');
                         }
                     }
@@ -602,10 +585,9 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
             var tutorId = row.find('.tutor-select').val();
             var vetId = row.find('.veterinario-select').val();
 
-            // Realizar uma solicitação AJAX para atualizar o paciente
             $.ajax({
                 type: 'POST',
-                url: 'atualizar_paciente.php', // Crie um arquivo PHP chamado atualizar_paciente.php
+                url: 'atualizar_paciente.php',
                 data: {
                     id: pacienteId,
                     nome: nome,
@@ -616,10 +598,10 @@ echo '<script>var veterinariosData = ' . json_encode($veterinarios_data) . ';</s
                 },
                 success: function(response) {
                     if (response === 'success') {
-                        // Atualização bem-sucedida
+
                         console.log('Paciente atualizado com sucesso.');
                     } else {
-                        // Atualização falhou
+
                         console.error('Falha na atualização do paciente.');
                     }
                 },

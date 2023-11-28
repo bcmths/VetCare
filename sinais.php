@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Verificar se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
-// Incluir o arquivo de conexão com o banco de dados
 require_once 'conexao.php';
 
 function adicionarSinaisClinicos($pdo, $descricao, $paciente_id)
@@ -39,11 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Consulta para recuperar informações de tutores
 $sinais_query = "SELECT id, tx_descricao, paciente_id FROM tb_sinaisclinicos";
 $sinais_result = $pdo->query($sinais_query);
 
-// Inserir os dados dos tutores no HTML como um objeto JavaScript
 $sinais_data = [];
 
 while ($row = $sinais_result->fetch(PDO::FETCH_ASSOC)) {
@@ -61,7 +57,6 @@ while ($row = $pacientes_result->fetch(PDO::FETCH_ASSOC)) {
     $pacientes_data[] = $row;
 }
 
-// Consulta para recuperar informações do veterinário
 $usuario_id = $_SESSION['user_id'];
 $vet_query = "SELECT tb_vet.tx_nome, tb_vet.tx_genero FROM tb_vet
     JOIN tb_usuario ON tb_vet.id = tb_usuario.vet_id
@@ -78,7 +73,6 @@ if ($vet['tx_genero'] === 'Masculino') {
     $prefixo = '';
 }
 
-// Inserir os dados do veterinário no HTML como um objeto JavaScript
 echo '<script>var sinaisData = ' . json_encode($sinais_data) . ';</script>';
 echo '<script>var veterinarioData = ' . json_encode([
     'prefixo' => $prefixo,
@@ -189,13 +183,10 @@ echo '<script>var veterinarioData = ' . json_encode([
             <script>
             function verificarSenhaMaster() {
 
-                // Exibe o modal
                 $("#modalSenhaMaster").modal("show");
 
-                // Obtém a senha master digitada
                 var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
 
-                // Faz a solicitação AJAX
                 $.ajax({
                     type: 'POST',
                     url: 'verificar_senha_master.php',
@@ -205,10 +196,10 @@ echo '<script>var veterinarioData = ' . json_encode([
                     },
                     success: function(data) {
                         if (data === 'success') {
-                            // Senha master verificada com sucesso, redirecionar para a página de usuários
+
                             window.location.href = 'usuarios.php';
                         } else {
-                            // Senha master incorreta, exibir uma mensagem de erro
+
                             alert("Senha Master incorreta. Tente novamente.");
                         }
                     },
@@ -277,14 +268,13 @@ echo '<script>var veterinarioData = ' . json_encode([
                             day: 'numeric'
                         };
                         const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                            options); // Altere 'pt-BR' para o código de idioma desejado
+                            options);
 
                         dateElement.textContent = `Hoje é ${formattedDate}.`;
                     }
 
-                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                    updateDate(); // Chama a função para exibir a data inicial
-                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                    updateDate();
+                    setInterval(updateDate, 1000);
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -519,13 +509,12 @@ echo '<script>var veterinarioData = ' . json_encode([
 
     <script>
     $(document).ready(function() {
-        // Adicione um evento de clique aos botões "Excluir"
+
         $('.delete-btn').click(function() {
             const sinais_id = $(this).data('sinais-id');
 
-            // Confirmar com o usuário antes de excluir
             if (confirm('Tem certeza de que deseja excluir este sinal clínico?')) {
-                // Realizar uma solicitação AJAX para excluir o sinal clínico
+
                 $.ajax({
                     type: 'POST',
                     url: 'excluir_sinais.php',
@@ -533,14 +522,14 @@ echo '<script>var veterinarioData = ' . json_encode([
                         id: sinais_id
                     },
                     success: function(data) {
-                        // Verificar a resposta do servidor
+
                         if (data === 'success') {
-                            // Exclusão bem-sucedida
+
                             console.log('Sinal clínico excluído com sucesso.');
-                            // Recarregue a página ou atualize a tabela para refletir a exclusão
+
                             location.reload();
                         } else {
-                            // Exibir uma mensagem de erro se a exclusão falhar
+
                             console.error('Falha ao excluir sinal clínico.');
                         }
                     }
@@ -571,10 +560,10 @@ echo '<script>var veterinarioData = ' . json_encode([
                 },
                 success: function(response) {
                     if (response === 'success') {
-                        // Atualização bem-sucedida
+
                         console.log('Sinais clínicos atualizados com sucesso.');
                     } else {
-                        // Atualização falhou
+
                         console.error('Falha na atualização dos sinais clínicos.');
                     }
                 },
