@@ -7,11 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario_id = $_POST['id']; // Usando o campo "id" para o ID do usuário
     $usuario = $_POST['usuario'];
     $senha = $_POST['senha'];
-    $vet_id = $_POST['vet_id'];
 
     // Atualize os dados do usuário no banco de dados
     $update_query = "UPDATE tb_usuario
-                    SET tx_usuario = :usuario, tx_senha = :senha, vet_id = :vet_id
+                    SET tx_usuario = :usuario, tx_senha = :senha
                     WHERE id = :id";
     $stmt = $pdo->prepare($update_query);
 
@@ -19,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([
             'usuario' => $usuario,
             'senha' => $senha,
-            'vet_id' => $vet_id,
             'id' => $usuario_id,
         ])
     ) {

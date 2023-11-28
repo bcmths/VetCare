@@ -175,49 +175,49 @@ echo '<script>var usuarioData = ' . json_encode([
 
 
             <script>
-            function verificarSenhaMaster() {
-                var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
-                var senhaMasterCorreta = "sisvet";
+                function verificarSenhaMaster() {
+                    var senhaMasterDigitada = document.getElementById("senhaMasterInput").value;
+                    var senhaMasterCorreta = "sisvet";
 
-                // Enviar a senha master para verificar no lado do servidor
-                $.ajax({
-                    type: 'POST',
-                    url: 'verificar_senha_master.php',
-                    data: {
-                        verificar_senha_master: true,
-                        senha_master: senhaMasterDigitada
-                    },
-                    success: function(data) {
-                        if (data === 'success') {
-                            // Senha master verificada com sucesso, recarregar a página de usuários
-                            window.location.href = 'usuarios.php';
-                        } else {
-                            // Senha master incorreta, exibir uma mensagem de erro
-                            alert("Senha Master incorreta. Tente novamente.");
+                    // Enviar a senha master para verificar no lado do servidor
+                    $.ajax({
+                        type: 'POST',
+                        url: 'verificar_senha_master.php',
+                        data: {
+                            verificar_senha_master: true,
+                            senha_master: senhaMasterDigitada
+                        },
+                        success: function (data) {
+                            if (data === 'success') {
+                                // Senha master verificada com sucesso, recarregar a página de usuários
+                                window.location.href = 'usuarios.php';
+                            } else {
+                                // Senha master incorreta, exibir uma mensagem de erro
+                                alert("Senha Master incorreta. Tente novamente.");
+                            }
+                        },
+                        error: function () {
+                            console.error('Erro na solicitação AJAX.');
                         }
-                    },
-                    error: function() {
-                        console.error('Erro na solicitação AJAX.');
-                    }
-                });
-            }
+                    });
+                }
             </script>
 
             <script>
-            $(document).ready(function() {
-                // Inicializar o modal
-                $('#senhaMasterModal').modal({
-                    backdrop: 'static', // Evitar fechar clicando fora do modal
-                    keyboard: false // Evitar fechar pressionando a tecla Esc
-                });
+                $(document).ready(function () {
+                    // Inicializar o modal
+                    $('#senhaMasterModal').modal({
+                        backdrop: 'static', // Evitar fechar clicando fora do modal
+                        keyboard: false // Evitar fechar pressionando a tecla Esc
+                    });
 
-                // Adicionar evento de clique ao link de navegação
-                $('li.nav-item a.nav-link[href="#"]').on('click', function(e) {
-                    e.preventDefault();
-                    // Exibir o modal
-                    $('#senhaMasterModal').modal('show');
+                    // Adicionar evento de clique ao link de navegação
+                    $('li.nav-item a.nav-link[href="#"]').on('click', function (e) {
+                        e.preventDefault();
+                        // Exibir o modal
+                        $('#senhaMasterModal').modal('show');
+                    });
                 });
-            });
             </script>
 
 
@@ -274,24 +274,24 @@ echo '<script>var usuarioData = ' . json_encode([
                     <div id="dateDisplay"></div>
 
                     <script>
-                    function updateDate() {
-                        const dateElement = document.getElementById('dateDisplay');
-                        const currentDate = new Date();
-                        const options = {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        };
-                        const formattedDate = currentDate.toLocaleDateString('pt-BR',
-                            options); // Altere 'pt-BR' para o código de idioma desejado
+                        function updateDate() {
+                            const dateElement = document.getElementById('dateDisplay');
+                            const currentDate = new Date();
+                            const options = {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            };
+                            const formattedDate = currentDate.toLocaleDateString('pt-BR',
+                                options); // Altere 'pt-BR' para o código de idioma desejado
 
-                        dateElement.textContent = `Hoje é ${formattedDate}.`;
-                    }
+                            dateElement.textContent = `Hoje é ${formattedDate}.`;
+                        }
 
-                    // Atualize a data automaticamente a cada segundo (ou conforme necessário)
-                    updateDate(); // Chama a função para exibir a data inicial
-                    setInterval(updateDate, 1000); // Atualiza a data a cada segundo
+                        // Atualize a data automaticamente a cada segundo (ou conforme necessário)
+                        updateDate(); // Chama a função para exibir a data inicial
+                        setInterval(updateDate, 1000); // Atualiza a data a cada segundo
                     </script>
 
                     <!-- Topbar Navbar -->
@@ -370,16 +370,15 @@ echo '<script>var usuarioData = ' . json_encode([
                                     </thead>
                                     <tbody>
                                         <?php foreach ($usuarios_data as $usuario): ?>
-                                        <tr>
-                                            <td contenteditable="true" class="editable-cell" data-field="tx_usuario">
-                                                <?php echo $usuario['tx_usuario']; ?>
-                                            </td>
-                                            <td contenteditable="true" class="editable-cell" data-field="tx_senha">
-                                                <?php echo $usuario['tx_senha']; ?>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                    // Obtendo o nome do veterinário associado ao usuário
+                                            <tr>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_usuario">
+                                                    <?php echo $usuario['tx_usuario']; ?>
+                                                </td>
+                                                <td contenteditable="true" class="editable-cell" data-field="tx_senha">
+                                                    <?php echo $usuario['tx_senha']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php
                                                     $nomeDoVet = "";
                                                     foreach ($veterinarios_data as $veterinario) {
                                                         if ($veterinario['id'] == $usuario['vet_id']) {
@@ -389,18 +388,18 @@ echo '<script>var usuarioData = ' . json_encode([
                                                     }
                                                     echo $nomeDoVet;
                                                     ?>
-                                            </td>
-                                            <td>
-                                                <button type="submit" class="btn btn-primary save-btn"
-                                                    data-usuario-id="<?php echo $usuario['id']; ?>">
-                                                    Salvar
-                                                </button>
-                                                <button class="btn btn-danger delete-btn"
-                                                    data-usuario-id="<?php echo $usuario['id']; ?>">
-                                                    Excluir
-                                                </button>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                                <td>
+                                                    <button type="submit" class="btn btn-primary save-btn"
+                                                        data-usuario-id="<?php echo $usuario['id']; ?>">
+                                                        Salvar
+                                                    </button>
+                                                    <button class="btn btn-danger delete-btn"
+                                                        data-usuario-id="<?php echo $usuario['id']; ?>">
+                                                        Excluir
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
@@ -445,9 +444,9 @@ echo '<script>var usuarioData = ' . json_encode([
                                                         <label for="vet_id">Veterinário:</label>
                                                         <select name="vet_id" id="vet_id" class="form-control" required>
                                                             <?php foreach ($veterinarios_data as $veterinario): ?>
-                                                            <option value="<?php echo $veterinario['id']; ?>">
-                                                                <?php echo $veterinario['tx_nome']; ?>
-                                                            </option>
+                                                                <option value="<?php echo $veterinario['id']; ?>">
+                                                                    <?php echo $veterinario['tx_nome']; ?>
+                                                                </option>
                                                             <?php endforeach; ?>
                                                         </select>
                                                     </div>
@@ -538,108 +537,108 @@ echo '<script>var usuarioData = ' . json_encode([
     <script src="js/demo/datatables-demo.js"></script>
 
     <script>
-    $(document).ready(function() {
-        $('.save-btn').click(function() {
-            var veterinarioId = $(this).data('veterinario-id');
-            var row = $(this).closest('tr');
-            var nome = row.find('[data-field="tx_nome"]').text().trim();
-            var genero = row.find('[data-field="tx_genero"]').text().trim();
+        $(document).ready(function () {
+            $('.save-btn').click(function () {
+                var usuario_id = $(this).data('usuario-id');
+                var row = $(this).closest('tr');
+                var usuario = row.find('[data-field="tx_usuario"]').text().trim();
+                var senha = row.find('[data-field="tx_senha"]').text().trim();
 
-            // Realizar uma solicitação AJAX para atualizar o veterinário
-            $.ajax({
-                type: 'POST',
-                url: 'atualizar_veterinario.php',
-                data: {
-                    id: veterinarioId,
-                    nome: nome,
-                    genero: genero
-                },
-                success: function(response) {
-                    if (response === 'success') {
-                        // Atualização bem-sucedida
-                        console.log('Veterinário atualizado com sucesso.');
-                    } else {
-                        // Atualização falhou
-                        console.error('Falha na atualização do veterinário.');
+                $.ajax({
+                    type: 'POST',
+                    url: 'atualizar_usuario.php',
+                    data: {
+                        id: usuario_id,
+                        usuario: usuario,
+                        senha: senha,
+
+                    },
+                    success: function (response) {
+                        if (response === 'success') {
+                            // Atualização bem-sucedida
+                            console.log('Usuário atualizado com sucesso.');
+                        } else {
+                            // Atualização falhou
+                            console.error('Falha na atualização do usuário.');
+                        }
+                    },
+                    error: function () {
+                        console.error('Erro na solicitação AJAX.');
                     }
-                },
-                error: function() {
-                    console.error('Erro na solicitação AJAX.');
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // Adicione um evento de clique aos botões "Excluir"
+            $('.delete-btn').click(function () {
+                const usuario_id = $(this).data('usuario-id');
+
+                // Confirmar com o usuário antes de excluir
+                if (confirm('Tem certeza de que deseja excluir este usuário?')) {
+                    // Realizar uma solicitação AJAX para excluir o usuário
+                    $.ajax({
+                        type: 'POST',
+                        url: 'excluir_usuario.php', // Crie um arquivo para a exclusão dos usuários
+                        data: {
+                            id: usuario_id
+                        },
+                        success: function (data) {
+                            // Verificar a resposta do servidor
+                            if (data === 'success') {
+                                // Exclusão bem-sucedida
+                                console.log('Usuário excluído com sucesso.');
+                                // Recarregue a página ou atualize a tabela para refletir a exclusão
+                                location.reload();
+                            } else {
+                                // Exibir uma mensagem de erro se a exclusão falhar
+                                console.error('Falha ao excluir usuário.');
+                            }
+                        }
+                    });
                 }
             });
         });
-    });
     </script>
 
     <script>
-    $(document).ready(function() {
-        // Adicione um evento de clique aos botões "Excluir"
-        $('.delete-btn').click(function() {
-            const usuario_id = $(this).data('usuario-id');
+        function verificarSenhaMaster() {
+            // Substitua 'suaSenhaMaster' pela senha master real
+            var senhaMasterDigitada = document.getElementById("senhaMaster").value;
+            var senhaMasterCorreta = "sisvet";
 
-            // Confirmar com o usuário antes de excluir
-            if (confirm('Tem certeza de que deseja excluir este usuário?')) {
-                // Realizar uma solicitação AJAX para excluir o usuário
-                $.ajax({
-                    type: 'POST',
-                    url: 'excluir_usuario.php', // Crie um arquivo para a exclusão dos usuários
-                    data: {
-                        id: usuario_id
-                    },
-                    success: function(data) {
-                        // Verificar a resposta do servidor
-                        if (data === 'success') {
-                            // Exclusão bem-sucedida
-                            console.log('Usuário excluído com sucesso.');
-                            // Recarregue a página ou atualize a tabela para refletir a exclusão
-                            location.reload();
-                        } else {
-                            // Exibir uma mensagem de erro se a exclusão falhar
-                            console.error('Falha ao excluir usuário.');
-                        }
-                    }
-                });
+            if (senhaMasterDigitada === senhaMasterCorreta) {
+                // Senha correta, redirecionar para a página de usuários
+                window.location.href = "usuarios.php";
+            } else {
+                // Senha incorreta, limpar campo e exibir mensagem de erro
+                document.getElementById("senhaMaster").value = "";
+                alert("Senha Master incorreta. Tente novamente.");
             }
-        });
-    });
+        }
     </script>
 
     <script>
-    function verificarSenhaMaster() {
-        // Substitua 'suaSenhaMaster' pela senha master real
-        var senhaMasterDigitada = document.getElementById("senhaMaster").value;
-        var senhaMasterCorreta = "sisvet";
+        function validarFormulario() {
+            var senha = document.getElementById('tx_senha').value;
+            var confirmarSenha = document.getElementById('tx_confirmar_senha').value;
 
-        if (senhaMasterDigitada === senhaMasterCorreta) {
-            // Senha correta, redirecionar para a página de usuários
-            window.location.href = "usuarios.php";
-        } else {
-            // Senha incorreta, limpar campo e exibir mensagem de erro
-            document.getElementById("senhaMaster").value = "";
-            alert("Senha Master incorreta. Tente novamente.");
+            if (senha !== confirmarSenha) {
+                alert('As senhas não coincidem. Por favor, verifique.');
+                return false; // Impede o envio do formulário se as senhas não coincidirem
+            }
+
+            return true; // Permite o envio do formulário se as senhas coincidirem
         }
-    }
-    </script>
-
-    <script>
-    function validarFormulario() {
-        var senha = document.getElementById('tx_senha').value;
-        var confirmarSenha = document.getElementById('tx_confirmar_senha').value;
-
-        if (senha !== confirmarSenha) {
-            alert('As senhas não coincidem. Por favor, verifique.');
-            return false; // Impede o envio do formulário se as senhas não coincidirem
-        }
-
-        return true; // Permite o envio do formulário se as senhas coincidirem
-    }
     </script>
 
 
     <style>
-    .table-responsive {
-        overflow-x: hidden;
-    }
+        .table-responsive {
+            overflow-x: hidden;
+        }
     </style>
 
 </body>

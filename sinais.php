@@ -361,22 +361,15 @@ echo '<script>var veterinarioData = ' . json_encode([
                                     <tbody>
                                         <?php foreach ($sinais_data as $sinais): ?>
                                         <tr>
-                                            <td class="paciente-select" data-field="paciente_id">
+                                            <td>
+                                                <select class="paciente-select" data-field="paciente_id">
+                                                    <?php foreach ($pacientes_data as $paciente): ?>
 
-                                                <select>
-                                                    <?php
-
-                                                        $paciente_id = $sinais['paciente_id'];
-                                                       
-
-                                                        $consulta_paciente = "SELECT id, tx_nome FROM tb_paciente";
-                                                        $stmt_paciente = $pdo->prepare($consulta_paciente);
-                                                        $stmt_paciente->execute();
-                                                        while ($paciente = $stmt_paciente->fetch(PDO::FETCH_ASSOC)) {
-                                                            $selected = ($paciente['id'] == $paciente_id) ? 'selected' : '';
-                                                            echo '<option value="' . $paciente['id'] . '" ' . $selected . '>' . $paciente['tx_nome'] . '</option>';
-                                                        }
-                                                        ?>
+                                                    <option value="<?php echo $paciente['id']; ?>"
+                                                        <?php if ($sinais['id'] == $paciente['id']) echo "selected"; ?>>
+                                                        <?php echo $paciente['tx_nome']; ?>
+                                                    </option>
+                                                    <?php endforeach; ?>
                                                 </select>
                                             </td>
 
@@ -422,14 +415,16 @@ echo '<script>var veterinarioData = ' . json_encode([
                                                 <form method="post" id="addSinaisForm">
                                                     <div class="form-group">
                                                         <label for="paciente_id">Paciente:</label>
-                                                        <select name="paciente_id" id="paciente_id" class="form-control"
-                                                            required>
-                                                            <?php
-                                                            foreach ($pacientes_data as $paciente) {
-                                                                echo '<option value="' . $paciente['id'] . '">' . $paciente['tx_nome'] . '</option>';
-                                                            }
-                                                            ?>
+                                                        <select name="paciente_id" required>
+                                                            <option value="" disabled selected>Selecione um paciente
+                                                            </option>
+                                                            <?php foreach ($pacientes_data as $paciente): ?>
+                                                            <option value="<?= $paciente['id']; ?>">
+                                                                <?= $paciente['tx_nome']; ?>
+                                                            </option>
+                                                            <?php endforeach; ?>
                                                         </select>
+
                                                     </div>
 
                                                     <div class="form-group">
@@ -561,6 +556,8 @@ echo '<script>var veterinarioData = ' . json_encode([
             var row = $(this).closest('tr');
             var descricao = row.find('[data-field="tx_descricao"]').text().trim();
             var pacienteId = row.find('.paciente-select').val();
+            console.log(sinaisId)
+            console.log(descricao)
             console.log(pacienteId)
 
             $.ajax({
