@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 31/10/2023 às 18:31
+-- Tempo de geração: 28/11/2023 às 21:49
 -- Versão do servidor: 10.4.28-MariaDB
 -- Versão do PHP: 8.2.4
 
@@ -41,9 +41,16 @@ CREATE TABLE `tb_paciente` (
 --
 
 INSERT INTO `tb_paciente` (`id`, `tx_nome`, `tx_animal`, `tx_raca`, `tutor_id`, `vet_id`) VALUES
-(6, 'Ralf', 'Cachorro', 'Beagle', 5, 8),
-(7, 'Sasha', 'Gato', 'Siamesa', 5, 4),
-(8, 'Márcio', 'Gato', 'Persa', 5, 5);
+(1, 'Bella', 'Cachorro', 'Labrador Retriever', 2, 45),
+(2, 'Thor', 'Gato', 'Siamês', 2, 45),
+(3, 'Luna', 'Cachorro', 'Bulldog Francês', 3, 47),
+(4, 'Milo', 'Gato', 'Persa', 4, 44),
+(5, 'Daisy', 'Cachorro', 'Golden Retriever', 5, 48),
+(6, 'Max', 'Cachorro', 'Poodle', 1, 44),
+(7, 'Nina', 'Gato', 'Maine Coon', 2, 47),
+(8, 'Rocky', 'Cachorro', 'Bulldog Inglês', 3, 47),
+(9, 'Cleo', 'Gato', 'Bengal', 4, 47),
+(10, 'Charlie', 'Cachorro', 'Dachshund', 5, 48);
 
 -- --------------------------------------------------------
 
@@ -54,7 +61,7 @@ INSERT INTO `tb_paciente` (`id`, `tx_nome`, `tx_animal`, `tx_raca`, `tutor_id`, 
 CREATE TABLE `tb_prontuario` (
   `id` int(11) NOT NULL,
   `tx_obs` text DEFAULT NULL,
-  `paciente_id` int(11) NOT NULL
+  `paciente_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -62,7 +69,16 @@ CREATE TABLE `tb_prontuario` (
 --
 
 INSERT INTO `tb_prontuario` (`id`, `tx_obs`, `paciente_id`) VALUES
-(11, 'Observação do paciente 1', 6);
+(1, 'Administrar medicamento contra pulgas e carrapatos', 1),
+(2, 'Recomendar exames pulmonares para avaliar a tosse', 7),
+(3, 'Prescrever tratamento dermatológico para alergia', 3),
+(4, 'Realizar exames gastrointestinais para investigar vômitos', 4),
+(5, 'Avaliar exames metabólicos para diagnosticar letargia', 5),
+(6, 'Iniciar tratamento para infecção respiratória', 1),
+(7, 'Sessões de treinamento comportamental recomendadas', 2),
+(8, 'Prescrever colírio para tratar infecção ocular', 3),
+(9, 'Consultar urologista para avaliação de dificuldade urinária', 10),
+(10, 'Tratamento dermatológico para aliviar coceira nas orelhas', 10);
 
 -- --------------------------------------------------------
 
@@ -81,10 +97,21 @@ CREATE TABLE `tb_sinaisclinicos` (
 --
 
 INSERT INTO `tb_sinaisclinicos` (`id`, `tx_descricao`, `paciente_id`) VALUES
-(1, 'Sinal Clínico 1 do Paciente 6', 6),
-(2, 'Sinal Clínico 2 do Paciente 6', 6),
-(3, 'Sinal Clínico 1 do Paciente 7', 7),
-(4, 'Sinal Clínico 2 do Paciente 7', 7);
+(1, 'Coceira persistente e perda de pelos', 8),
+(2, 'Dificuldade para respirar e tosse seca', 10),
+(3, 'Lambedura excessiva das patas traseiras', 3),
+(4, 'Vômitos frequentes após as refeições', 4),
+(5, 'Letargia e falta de apetite', 5),
+(6, 'Tosse seca e olhos lacrimejantes', 1),
+(7, 'Comportamento agressivo e rosnados', 2),
+(8, 'Secreção ocular e espirros frequentes', 3),
+(9, 'Dificuldade para urinar e miau frequente', 4),
+(10, 'Coceira intensa nas orelhas e sacudidas frequentes da cabeça', 5),
+(11, 'Vômitos com sangue e apatia', 1),
+(12, 'Dificuldade para se movimentar e dor nas articulações', 2),
+(13, 'Aumento da sede e micção frequente', 3),
+(14, 'Pelagem opaca e perda de peso', 4),
+(15, 'Dificuldade para defecar e letargia', 5);
 
 -- --------------------------------------------------------
 
@@ -97,7 +124,7 @@ CREATE TABLE `tb_tutor` (
   `tx_nome` varchar(255) NOT NULL,
   `tx_email` varchar(255) DEFAULT NULL,
   `nb_telefone` varchar(20) DEFAULT NULL,
-  `tx_endereco` varchar(255) DEFAULT NULL
+  `tx_endereco` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -105,9 +132,12 @@ CREATE TABLE `tb_tutor` (
 --
 
 INSERT INTO `tb_tutor` (`id`, `tx_nome`, `tx_email`, `nb_telefone`, `tx_endereco`) VALUES
-(5, 'Caio', 'caio@email.com', '987-654-3210', 'Endereço 2'),
-(6, 'Matheus Barcelos de Carvalho', 'barcelosmatheusc@gmail.com', '61996647754', 'Condomínio Morada dos Nobres, S/N'),
-(7, 'Rafaela Vilhena', 'rafaelalfvilhena@gmail.com', '61998496649', 'SHCES QUADRA 805 BLOCO A APTO 101');
+(1, 'Ana Silva', 'ana@email.com', '123456789', 'Rua A, 123'),
+(2, 'Carlos Oliveira', 'carlos@email.com', '987654321', 'Av. B, 456'),
+(3, 'Fernanda Santos', 'fernanda@email.com', '123987456', 'Rua C, 789'),
+(4, 'Diego Pereira', 'diego@email.com', '456789123', 'Av. D, 101'),
+(5, 'Julia Souza', 'julia@email.com', '789123456', 'Rua E, 202'),
+(8, 'Matheus Barcelos de Carvalho', 'barcelosmatheusc@gmail.com', '61996647754', 'Condomínio Morada dos Nobres, S/N');
 
 -- --------------------------------------------------------
 
@@ -127,9 +157,10 @@ CREATE TABLE `tb_usuario` (
 --
 
 INSERT INTO `tb_usuario` (`id`, `tx_usuario`, `tx_senha`, `vet_id`) VALUES
-(4, 'rafa', '123', 4),
-(5, 'mat', '123', 5),
-(10, 'marcio', '321', 10);
+(22, 'tiagolima', 'lima2022!', 44),
+(23, 'isabelamartins', 'senha1234', 45),
+(25, 'amandasilva', 'senhaAmanda', 47),
+(26, 'mat', '123', 48);
 
 -- --------------------------------------------------------
 
@@ -148,10 +179,10 @@ CREATE TABLE `tb_vet` (
 --
 
 INSERT INTO `tb_vet` (`id`, `tx_nome`, `tx_genero`) VALUES
-(4, 'Rafaela Vilhena', 'Feminino'),
-(5, 'Matheus Barcelos', 'Masculino'),
-(8, 'Dudu', 'Masculino'),
-(10, 'Márcio', 'Masculino');
+(44, 'Tiago Lima', 'Masculino'),
+(45, 'Isabela Martins', 'Feminino'),
+(47, 'Amanda Silva', 'Feminino'),
+(48, 'Matheus Barcelos de Carvalho', 'Masculino');
 
 --
 -- Índices para tabelas despejadas
@@ -170,7 +201,7 @@ ALTER TABLE `tb_paciente`
 --
 ALTER TABLE `tb_prontuario`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `tb_prontuario_ibfk_1` (`paciente_id`);
+  ADD KEY `paciente_id` (`paciente_id`);
 
 --
 -- Índices de tabela `tb_sinaisclinicos`
@@ -206,37 +237,37 @@ ALTER TABLE `tb_vet`
 -- AUTO_INCREMENT de tabela `tb_paciente`
 --
 ALTER TABLE `tb_paciente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `tb_prontuario`
 --
 ALTER TABLE `tb_prontuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `tb_sinaisclinicos`
 --
 ALTER TABLE `tb_sinaisclinicos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de tabela `tb_tutor`
 --
 ALTER TABLE `tb_tutor`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de tabela `tb_usuario`
 --
 ALTER TABLE `tb_usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de tabela `tb_vet`
 --
 ALTER TABLE `tb_vet`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- Restrições para tabelas despejadas
@@ -253,7 +284,7 @@ ALTER TABLE `tb_paciente`
 -- Restrições para tabelas `tb_prontuario`
 --
 ALTER TABLE `tb_prontuario`
-  ADD CONSTRAINT `tb_prontuario_ibfk_1` FOREIGN KEY (`paciente_id`) REFERENCES `tb_paciente` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `tb_prontuario_ibfk_1` FOREIGN KEY (`paciente_id`) REFERENCES `tb_paciente` (`id`);
 
 --
 -- Restrições para tabelas `tb_sinaisclinicos`
