@@ -1,1 +1,1 @@
-Este é um trablho acadêmico voltado para clínica veterinária!
+Este é um trabalho acadêmico voltado para clínica veterinária!
